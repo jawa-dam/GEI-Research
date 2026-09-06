@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/jawa-dam/GEI-Research/blob/main/validation/validation-rules.json",
+  "title": "GEI Research Validation Rules",
+  "description": "Machine-readable governance rules for the GEI-Research canonical dataset.",
+  "type": "object",
+  "required": ["validation_version", "id_pattern", "confidence_levels", "evidence_levels", "rules"],
+  "properties": {
+    "validation_version": {"type": "string", "const": "1.0.4"},
+    "id_pattern": {"type": "string", "const": "^[A-Z]{3}(?:-[A-Z0-9]+)+-[0-9]{3}$"},
+    "confidence_levels": {"type": "array", "items": {"enum": ["C0", "C1", "C2", "C3", "C4", "C5"]}, "minItems": 6, "maxItems": 6},
+    "evidence_levels": {"type": "array", "items": {"enum": ["E1", "E2", "E3", "E4", "E5"]}, "minItems": 5, "maxItems": 5},
+    "rules": {
+      "type": "object",
+      "required": ["schema_conformance", "identity", "references", "epistemic_firewall", "comparisons", "status_integrity"],
+      "properties": {
+        "schema_conformance": {"type": "boolean", "const": true},
+        "identity": {"type": "boolean", "const": true},
+        "references": {"type": "boolean", "const": true},
+        "epistemic_firewall": {"type": "boolean", "const": true},
+        "comparisons": {"type": "boolean", "const": true},
+        "status_integrity": {"type": "boolean", "const": true}
+      }
+    }
+  }
+}
