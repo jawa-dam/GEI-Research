@@ -6,9 +6,9 @@ from pathlib import Path
 from jsonschema import Draft202012Validator, RefResolver
 ROOT=Path(__file__).resolve().parents[1];DATA=ROOT/"data";SCHEMA=ROOT/"schema"
 ID_RE=re.compile(r"^[A-Z]{3}(?:-[A-Z0-9]+)+-[0-9]{3}$")
-TYPE_TO_SCHEMA={"chronology":"chronology.schema.json","civilization":"civilization.schema.json","region":"region.schema.json","text":"text.schema.json","passage":"passage.schema.json","cosmology":"cosmology.schema.json","water":"water.schema.json","technology":"technology.schema.json","linguistics":"linguistics.schema.json","source":"source.schema.json","evidence":"evidence.schema.json","comparison":"comparison.schema.json","interpretation":"interpretation.schema.json","hypothesis":"hypothesis.schema.json","question":"question.schema.json","claim":"claim.schema.json","investigation":"investigation.schema.json","result":"result.schema.json","outcome":"outcome.schema.json","decision":"decision.schema.json","execution":"execution.schema.json","observation":"observation.schema.json","evaluation":"evaluation.schema.json","provenance":"provenance.schema.json"}
+TYPE_TO_SCHEMA={"chronology":"chronology.schema.json","civilization":"civilization.schema.json","region":"region.schema.json","text":"text.schema.json","passage":"passage.schema.json","cosmology":"cosmology.schema.json","water":"water.schema.json","technology":"technology.schema.json","linguistics":"linguistics.schema.json","source":"source.schema.json","evidence":"evidence.schema.json","comparison":"comparison.schema.json","interpretation":"interpretation.schema.json","hypothesis":"hypothesis.schema.json","question":"question.schema.json","claim":"claim.schema.json","investigation":"investigation.schema.json","result":"result.schema.json","outcome":"outcome.schema.json","decision":"decision.schema.json","execution":"execution.schema.json","observation":"observation.schema.json","evaluation":"evaluation.schema.json","provenance":"provenance.schema.json","audit":"audit.schema.json"}
 ALLOWED_CONFIDENCE={f"C{i}" for i in range(6)};ALLOWED_EVIDENCE={f"E{i}" for i in range(1,6)}
-REFERENCE_KEYS={"related_ids","source_ids","evidence_ids","subject_ids","comparison_ids","passage_ids","text_ids","civilization_ids","region_ids","chronology_ids","water_ids","technology_ids","linguistic_ids","interpretation_ids","hypothesis_ids","supports_ids","challenges_ids","tests_ids","result_ids","question_ids","investigation_ids","claim_ids","counterevidence_ids","outcome_ids","evaluation_ids","decision_ids","execution_ids","observation_ids","provenance_ids","record_ids"}
+REFERENCE_KEYS={"related_ids","source_ids","evidence_ids","subject_ids","comparison_ids","passage_ids","text_ids","civilization_ids","region_ids","chronology_ids","water_ids","technology_ids","linguistic_ids","interpretation_ids","hypothesis_ids","supports_ids","challenges_ids","tests_ids","result_ids","question_ids","investigation_ids","claim_ids","counterevidence_ids","outcome_ids","evaluation_ids","decision_ids","execution_ids","observation_ids","provenance_ids","record_ids","audited_record_ids"}
 def load_json(path):
     with path.open(encoding="utf-8") as f:return json.load(f)
 def all_records():return sorted(p for p in DATA.rglob("*.json") if p.name!="validation-rules.json")
@@ -68,6 +68,13 @@ def main():
             if obj.get("event_type") in {"updated","revised","restored"} and not obj.get("previous_versions"):errors.append(f"{rel}: change event requires previous_versions")
             if obj.get("event_type") in {"updated","revised"} and not obj.get("new_versions"):errors.append(f"{rel}: change event requires new_versions")
             if obj.get("verification_status")=="disputed":warnings.append(f"{rel}: provenance record is disputed")
+        if obj.get("type")=="audit":
+            summary=obj.get("summary",{});checks=obj.get("checks",[])
+            if summary.get("checks")!=len(checks):errors.append(f"{rel}: audit summary.checks does not match checks length")
+            if summary.get("passed",0)+summary.get("warnings",0)+summary.get("failed",0)!=len(checks):errors.append(f"{rel}: audit summary counts do not equal checks length")
+            if obj.get("audit_status")=="pass" and summary.get("failed",0)>0:errors.append(f"{rel}: audit_status=pass cannot contain failed checks")
+            if obj.get("audit_status")=="fail" and summary.get("failed",0)==0:errors.append(f"{rel}: audit_status=fail requires at least one failed check")
+            if any(c.get("status")=="fail" for c in checks) and obj.get("audit_status")!="fail":errors.append(f"{rel}: failed audit check requires audit_status=fail")
     print("GEI-Research Validation Engine V1.0.12");print(f"Records scanned: {len(parsed)}");print(f"Errors: {len(errors)}");print(f"Warnings: {len(warnings)}")
     for x in errors:print(f"ERROR: {x}")
     for x in warnings:print(f"WARNING: {x}")
