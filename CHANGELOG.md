@@ -2,6 +2,19 @@
 
 All notable changes to GEI-Research are recorded here.
 
+## V1.0.13 — Provenance Drift Detection & Integrity Attestation Engine
+
+- Added canonical SHA-256 content-digest baselines for provenance-tracked research records.
+- Added `attestation.schema.json` and canonical `ATT-GEI-V1013-001` integrity attestation.
+- Added `PRV-GEI-V1013-001` as a new verified digest-baseline provenance event without rewriting the V1.0.12 historical checkpoint.
+- Added live canonical-JSON SHA-256 calculation in the research interface.
+- Added drift detection that flags current record content when it no longer matches its verified baseline.
+- Added PASS / WARN / DRIFT / FAIL attestation states and expected-vs-observed digest reporting.
+- Added deployment gates that independently recompute attested record digests before GitHub Pages deployment.
+- Extended validation to recognize attestation records, digest formats, baseline provenance, expected/observed digest parity, and drift-status consistency.
+- Preserved the epistemic firewall: integrity attestation establishes content stability relative to a baseline; it does not establish truth, authorial intent, evidentiary sufficiency, or confirmation.
+- Preserved the rule: **CONNECTED ≠ SUPPORTED ≠ CORROBORATED ≠ CONFIRMED**.
+
 ## V1.0.12 — Provenance Intelligence & Audit Trail
 
 - Extended the V1.0.12 provenance layer from event display into a canonical **audit-trail system**.
@@ -48,22 +61,13 @@ All notable changes to GEI-Research are recorded here.
 
 ## V1.0.9 — GEI Research Investigation Engine
 
-- Added canonical **research question** records.
-- Added canonical **claim/proposition** records.
-- Added canonical **investigation** records.
-- Added canonical **result** and **outcome** records.
-- Added investigation schemas for machine validation.
-- Added a dedicated Investigation Workspace to the research interface.
-- Added chain visualization for Question → Claim → Source → Evidence → Comparison → Interpretation → Hypothesis → Test → Result → Outcome.
-- Added explicit alternative-explanation and counterevidence tracking.
-- Added test-plan tracking and non-confirmatory outcomes such as inconclusive / requires further testing.
-- Extended validation to cover the new record types and investigation-chain integrity.
-- Preserved the rule that relationships are derived from canonical references and do not manufacture evidence.
+- Added canonical **research question**, **claim/proposition**, **investigation**, **result**, and **outcome** records.
+- Added investigation schemas, a dedicated workspace, explicit alternative-explanation and counterevidence tracking, and test-plan tracking.
+- Extended validation to cover investigation-chain integrity.
 
 ## V1.0.8 — Graph Intelligence & Evidence Traceability
 
 - Added evidence-aware graph traceability and epistemic audit capabilities.
-- Added structural checks for broken references and unsupported research linkage.
 
 ## V1.0.7 — Research Graph
 
@@ -78,13 +82,3 @@ All notable changes to GEI-Research are recorded here.
 - Added JSON Schema validation, ID integrity, cross-record reference checks, and epistemic governance rules.
 
 ## V1.0.3 — Starter Dataset
-
-- Added initial chronology, civilization, region, text, cosmology, water, source, evidence, comparison, interpretation, and hypothesis records.
-
-## V1.0.2 — Schema Layer
-
-- Added machine-readable schemas for canonical research records.
-
-## V1.0.1 — Foundation
-
-- Established the canonical GEI research repository and structured research pipeline.
