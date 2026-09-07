@@ -1,0 +1,18 @@
+{
+  "id":"LED-GEI-V1014-001",
+  "type":"ledger",
+  "title":"V1.0.14 Immutable Research Ledger Baseline",
+  "status":"active",
+  "version":"1.0.14",
+  "ledger_status":"intact",
+  "record_ids":["HYP-GEI-001","EVA-GEI-GEN1-001"],
+  "chain":[
+    {"state_id":"STATE-HYP-GEI-001-001","record_id":"HYP-GEI-001","record_version":"1.0.11","content_digest":"9eb686243866da763f55768f557a6cc3081c0416f9ce93d89661e76039b7e8e1","digest_algorithm":"SHA-256","digest_scope":"canonical_json","provenance_id":"PRV-GEI-V1013-001","verification_status":"verified","timestamp":"2026-09-07T00:00:00Z","change_type":"baseline","change_reason":"Inherited from the verified V1.0.13 canonical-content integrity checkpoint."},
+    {"state_id":"STATE-EVA-GEI-GEN1-001-001","record_id":"EVA-GEI-GEN1-001","record_version":"1.0.11","content_digest":"c7d003f37937f38ec2933de9e41916256461dfdbd89ba054d28b9f44cf584004","digest_algorithm":"SHA-256","digest_scope":"canonical_json","provenance_id":"PRV-GEI-V1013-001","verification_status":"verified","timestamp":"2026-09-07T00:00:00Z","change_type":"baseline","change_reason":"Inherited from the verified V1.0.13 canonical-content integrity checkpoint."}
+  ],
+  "created_at":"2026-09-07T00:00:00Z",
+  "actor":"GEI Research System",
+  "epistemic_firewall":"The ledger proves sequence and integrity of recorded states; it does not prove the truth of the research claims represented by those states.",
+  "integrity_notes":"V1.0.14 establishes immutable state-chain records without rewriting historical research. Future substantive revisions must append a new state and provenance event rather than mutate a prior ledger state.",
+  "notes":"CONNECTED ≠ SUPPORTED ≠ CORROBORATED ≠ CONFIRMED. A valid chain-of-custody is traceability infrastructure, not substantive evidence."
+}
