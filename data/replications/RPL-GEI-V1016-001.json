@@ -1,0 +1,39 @@
+{
+  "id":"RPL-GEI-V1016-001","type":"replication","title":"GEI Genesis 1 Independent Replication & Cross-Operator Verification Baseline","status":"active","version":"1.0.16",
+  "protocol_id":"PRO-GEI-V1015-001","baseline_reproducibility_id":"REP-GEI-V1015-001",
+  "operators":[
+    {"operator_id":"OP-GEI-V1016-001","role":"Baseline operator","independent":false,"status":"completed","notes":"Original GEI Research System run establishes the baseline procedure; it is not counted as an independent replication."},
+    {"operator_id":"OP-GEI-V1016-002","role":"Independent replication operator A","independent":true,"status":"planned"},
+    {"operator_id":"OP-GEI-V1016-003","role":"Independent replication operator B","independent":true,"status":"planned"}
+  ],
+  "replication_runs":[
+    {"run_id":"RNR-GEI-V1016-001","operator_id":"OP-GEI-V1016-001","protocol_version":"1.0.15","status":"completed","blind_to_baseline":false,"step_results":[
+      {"step_id":"STEP-GEI-V1015-001","status":"pass","observed":"Canonical inputs and research identifiers were resolved."},
+      {"step_id":"STEP-GEI-V1015-002","status":"pass","observed":"Declared inputs were reconstructed from canonical records."},
+      {"step_id":"STEP-GEI-V1015-003","status":"not_run","observed":"The baseline record did not perform an independent reproduction."},
+      {"step_id":"STEP-GEI-V1015-004","status":"not_run","observed":"No independent comparison was available."},
+      {"step_id":"STEP-GEI-V1015-005","status":"pass","observed":"The record was preserved without upgrading the hypothesis."}
+    ],"notes":"Baseline reference only; not an independent replication."},
+    {"run_id":"RNR-GEI-V1016-002","operator_id":"OP-GEI-V1016-002","protocol_version":"1.0.15","status":"planned","blind_to_baseline":true,"step_results":[
+      {"step_id":"STEP-GEI-V1015-001","status":"not_run","observed":"Awaiting independent operator execution."},
+      {"step_id":"STEP-GEI-V1015-002","status":"not_run","observed":"Awaiting independent operator execution."},
+      {"step_id":"STEP-GEI-V1015-003","status":"not_run","observed":"Awaiting independent operator execution."},
+      {"step_id":"STEP-GEI-V1015-004","status":"not_run","observed":"Awaiting independent operator execution."},
+      {"step_id":"STEP-GEI-V1015-005","status":"not_run","observed":"Awaiting independent operator execution."}
+    ]},
+    {"run_id":"RNR-GEI-V1016-003","operator_id":"OP-GEI-V1016-003","protocol_version":"1.0.15","status":"planned","blind_to_baseline":true,"step_results":[
+      {"step_id":"STEP-GEI-V1015-001","status":"not_run","observed":"Awaiting independent operator execution."},
+      {"step_id":"STEP-GEI-V1015-002","status":"not_run","observed":"Awaiting independent operator execution."},
+      {"step_id":"STEP-GEI-V1015-003","status":"not_run","observed":"Awaiting independent operator execution."},
+      {"step_id":"STEP-GEI-V1015-004","status":"not_run","observed":"Awaiting independent operator execution."},
+      {"step_id":"STEP-GEI-V1015-005","status":"not_run","observed":"Awaiting independent operator execution."}
+    ]}
+  ],
+  "comparison":{"comparison_status":"not_started","compared_runs":[],"agreement_metrics":{"protocol_fidelity":0,"observation_agreement":0,"alternative_explanation_agreement":0},"disagreements":[],"resolution_method":"Blind comparison after independent runs are completed; disagreements remain recorded and are not averaged away." ,"blind_comparison":true},
+  "replication_status":"pending_independent_runs","replication_score":0,
+  "deviations":["No independent operator has completed a replication run."],
+  "limitations":["This baseline establishes the cross-operator framework but does not demonstrate successful replication."],
+  "result_ids":["RES-GEI-GEN1-001"],"outcome_ids":["OUT-GEI-GEN1-001"],
+  "epistemic_firewall":"Cross-operator agreement tests repeatability and robustness of the recorded research procedure; it does not establish truth, authorial intent, or confirmation of the GEI hypothesis. Agreement can increase reproducibility confidence without becoming substantive evidence. CONNECTED ≠ SUPPORTED ≠ CORROBORATED ≠ CONFIRMED.",
+  "notes":"V1.0.16 baseline. Future operator runs must append new run states or a new version; they must not overwrite historical runs. Independent operators must preserve the V1.0.15 protocol and record deviations explicitly."
+}
