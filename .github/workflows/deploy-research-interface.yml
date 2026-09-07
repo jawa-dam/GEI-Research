@@ -71,18 +71,19 @@ jobs:
           test -f data/protocols/PRO-GEI-V1015-001.json
           test -f data/reproducibility/REP-GEI-V1015-001.json
           test -f interface/reproducibility-engine.js
-          grep -q 'V1.0.15' interface/index.html
           grep -q 'Reproducibility' interface/reproducibility-engine.js
           grep -q 'Protocol' interface/reproducibility-engine.js
           python - <<'PY'
-          import json,pathlib
+          import json,pathlib,re
           p=json.loads(pathlib.Path('data/protocols/PRO-GEI-V1015-001.json').read_text())
           r=json.loads(pathlib.Path('data/reproducibility/REP-GEI-V1015-001.json').read_text())
+          i=pathlib.Path('interface/index.html').read_text()
           if p.get('version')!='1.0.15': raise SystemExit('Protocol version mismatch')
           if r.get('version')!='1.0.15': raise SystemExit('Reproducibility version mismatch')
           if not p.get('protocol_steps'): raise SystemExit('Protocol has no steps')
           if not p.get('reproducibility_criteria'): raise SystemExit('Protocol has no criteria')
-          print('V1.0.15 protocol and reproducibility verification passed.')
+          if not re.search(r'V1\.0\.17', i): raise SystemExit('Current interface is not V1.0.17')
+          print('V1.0.15 protocol/reproducibility integrity verified; current interface version verified separately as V1.0.17.')
           PY
       - name: Verify V1.0.16 independent replication engine
         run: |
