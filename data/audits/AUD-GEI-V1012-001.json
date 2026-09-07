@@ -1,0 +1,23 @@
+{
+  "id":"AUD-GEI-V1012-001",
+  "type":"audit",
+  "title":"V1.0.12 Provenance Integrity Baseline Audit",
+  "status":"active",
+  "version":"1.0.12",
+  "audit_scope":"Provenance traceability for the GEI hypothesis, outcome evaluation, and V1.0.12 provenance baseline.",
+  "audit_status":"pass_with_warnings",
+  "audited_record_ids":["HYP-GEI-001","EVA-GEI-GEN1-001","PRV-GEI-V1012-001"],
+  "provenance_ids":["PRV-GEI-V1012-001"],
+  "checks":[
+    {"check_id":"PRV-REF-001","name":"Provenance targets exist","status":"pass","description":"All records named by the V1.0.12 provenance baseline resolve to canonical records.","record_ids":["HYP-GEI-001","EVA-GEI-GEN1-001"],"provenance_ids":["PRV-GEI-V1012-001"]},
+    {"check_id":"PRV-REV-001","name":"Target records expose provenance linkage","status":"pass","description":"The hypothesis and evaluation explicitly reference the V1.0.12 provenance record.","record_ids":["HYP-GEI-001","EVA-GEI-GEN1-001"],"provenance_ids":["PRV-GEI-V1012-001"]},
+    {"check_id":"PRV-EPI-001","name":"Epistemic firewall preserved","status":"pass","description":"The provenance layer is documented as traceability and verification metadata rather than substantive evidence or confirmation.","record_ids":["HYP-GEI-001","EVA-GEI-GEN1-001"],"provenance_ids":["PRV-GEI-V1012-001"]},
+    {"check_id":"PRV-VER-001","name":"Verification state is explicit","status":"pass","description":"The baseline provenance record has an explicit verified state and integrity notes.","provenance_ids":["PRV-GEI-V1012-001"]},
+    {"check_id":"PRV-VRS-001","name":"Version transition is reviewable","status":"warning","description":"The baseline records a verification checkpoint over version 1.0.11; future change events should record distinct previous and new versions when substantive revisions occur.","provenance_ids":["PRV-GEI-V1012-001"]}
+  ],
+  "summary":{"checks":5,"passed":4,"warnings":1,"failed":0},
+  "actor":"GEI Research System",
+  "timestamp":"2026-09-07T00:00:00Z",
+  "epistemic_firewall":"This audit evaluates provenance integrity and traceability only. It does not establish that the GEI interpretation or hypothesis is true. CONNECTED remains distinct from SUPPORTED, CORROBORATED, and CONFIRMED.",
+  "notes":"This is the V1.0.12 baseline audit record. Future provenance events should extend the trail rather than overwrite prior research history."
+}
