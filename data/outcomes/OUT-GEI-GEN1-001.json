@@ -1,1 +1,15 @@
-{"id":"OUT-GEI-GEN1-001","type":"outcome","title":"Investigation remains open","status":"active","version":"1.0.9","outcome":"The GEI hydraulic interpretation remains an open, testable hypothesis. The research system now records the question, claim, evidence, interpretation, hypothesis, testing plan, result, and outcome as distinct layers.","investigation_ids":["INV-GEI-GEN1-001"],"result_ids":["RES-GEI-GEN1-001"],"disposition":"requires_further_testing","next_steps":["Add passage-level observations and evidence records.","Add explicit counterevidence and alternative explanations.","Run linguistic and technological tests against defined criteria.","Revise the hypothesis or result when evidence warrants."],"confidence":"C1","notes":"CONNECTED is not SUPPORTED; SUPPORTED is not CORROBORATED; CORROBORATED is not CONFIRMED."}
+{
+  "id":"OUT-GEI-GEN1-001",
+  "type":"outcome",
+  "title":"Investigation remains open",
+  "status":"active",
+  "version":"1.0.11",
+  "outcome":"The GEI hydraulic interpretation remains an open, testable hypothesis. The research system records the question, claim, evidence, interpretation, hypothesis, decision, execution, observation, result, outcome, and evaluation as distinct layers.",
+  "investigation_ids":["INV-GEI-GEN1-001"],
+  "result_ids":["RES-GEI-GEN1-001"],
+  "evaluation_ids":["EVA-GEI-GEN1-001"],
+  "disposition":"requires_further_testing",
+  "next_steps":["Add passage-level observations and evidence records.","Add explicit counterevidence and alternative explanations.","Run linguistic and technological tests against defined criteria.","Evaluate expected versus observed outcomes.","Revise the hypothesis or result when evidence warrants."],
+  "confidence":"C1",
+  "notes":"CONNECTED is not SUPPORTED; SUPPORTED is not CORROBORATED; CORROBORATED is not CONFIRMED. Outcome evaluation must remain explicit and auditable."
+}
