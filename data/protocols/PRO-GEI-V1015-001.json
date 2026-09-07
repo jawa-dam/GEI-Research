@@ -1,0 +1,29 @@
+{
+  "id":"PRO-GEI-V1015-001","type":"protocol","title":"GEI Research Reproducibility Baseline Protocol","status":"active","version":"1.0.15",
+  "question_ids":["Q-GEI-GEN1-001"],"investigation_ids":["INV-GEI-GEN1-001"],
+  "objective":"Define a repeatable, auditable procedure for independently rerunning the current Genesis 1 research investigation without changing its inputs, mappings, or epistemic status during execution.",
+  "protocol_steps":[
+    {"step_id":"STEP-GEI-V1015-001","order":1,"action":"Freeze and identify the protocol version, investigation, source records, evidence records, comparison records, interpretation, and hypothesis under test.","expected_observation":"All required record identifiers resolve to canonical records and versions before execution.","acceptance_rule":"No unresolved required input may be used."},
+    {"step_id":"STEP-GEI-V1015-002","order":2,"action":"Reconstruct the investigation inputs from the canonical repository and preserve the stated passage, source, evidence, comparison, and alternative-explanation selections.","expected_observation":"A second operator can reconstruct the same declared input set.","acceptance_rule":"Input identifiers and versions match the protocol baseline."},
+    {"step_id":"STEP-GEI-V1015-003","order":3,"action":"Execute the documented passage-level textual, lexical, comparative, historical-context, and counterevidence checks without adding post-hoc mappings.","expected_observation":"Each test step produces a recorded observation or an explicit not-run/deviation state.","acceptance_rule":"Deviations are recorded rather than silently corrected."},
+    {"step_id":"STEP-GEI-V1015-004","order":4,"action":"Compare observed results with the predefined predictions and with the stated non-hydraulic alternative explanations.","expected_observation":"Expected-versus-observed differences are explicit.","acceptance_rule":"A mismatch cannot be relabeled as support without recorded evidence."},
+    {"step_id":"STEP-GEI-V1015-005","order":5,"action":"Record the reproduction run, step outcomes, evidence links, deviations, limitations, and resulting reproducibility status.","expected_observation":"Another researcher can audit the reproduction record independently.","acceptance_rule":"Reproducibility status is determined from recorded execution, not from connectivity alone."}
+  ],
+  "inputs":[
+    {"input_id":"IN-GEI-V1015-001","description":"Genesis 1 source and passage records used by the investigation.","source_ids":["SRC-GEN-001"],"required":true},
+    {"input_id":"IN-GEI-V1015-002","description":"Existing GEI evidence and comparative records.","source_ids":["EVD-GEI-001"],"required":true},
+    {"input_id":"IN-GEI-V1015-003","description":"Existing investigation and hypothesis state.","source_ids":[],"required":true}
+  ],
+  "outputs":[{"output_id":"OUTP-GEI-V1015-001","description":"Reproduction run record","record_type":"reproducibility"},{"output_id":"OUTP-GEI-V1015-002","description":"Reproducibility assessment","record_type":"evaluation"}],
+  "reproducibility_criteria":[
+    {"criterion_id":"CRIT-GEI-V1015-001","name":"Input fidelity","rule":"All required declared inputs resolve to the same canonical records and versions.","threshold":"100% required inputs resolved"},
+    {"criterion_id":"CRIT-GEI-V1015-002","name":"Protocol fidelity","rule":"All protocol steps are executed or explicitly marked not_run with deviations recorded.","threshold":"No silent deviations"},
+    {"criterion_id":"CRIT-GEI-V1015-003","name":"Observation traceability","rule":"Observed claims are linked to recorded observations or evidence.","threshold":"Every reported observation traceable"},
+    {"criterion_id":"CRIT-GEI-V1015-004","name":"Alternative-explanation control","rule":"Results are compared against predefined non-hydraulic alternatives.","threshold":"Alternatives explicitly assessed"}
+  ],
+  "controls":["Predefine mappings before outcome review","Preserve unmatched passages and counterevidence","Record deviations","Do not upgrade hypothesis status from reproducibility alone"],
+  "alternative_explanations":["Primarily cosmological/theological reading","Symbolic literary ordering without engineering referent"],
+  "epistemic_firewall":"This protocol evaluates whether a research procedure can be reproduced. Reproducibility does not establish truth, authorial intent, or confirmation of the GEI hypothesis. CONNECTED ≠ SUPPORTED ≠ CORROBORATED ≠ CONFIRMED.",
+  "provenance_ids":["PRV-GEI-V1013-001"],
+  "notes":"Baseline protocol for V1.0.15. Future protocol revisions require a new version and provenance record rather than silent replacement."
+}
