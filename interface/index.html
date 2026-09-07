@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="description" content="GEI Research Interface — canonical exploration layer for Genesis Engineered research data.">
+  <meta name="description" content="GEI Research Interface — canonical exploration and relationship graph for Genesis Engineered research data.">
   <title>GEI Research Interface</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -23,9 +23,9 @@
     <main>
       <section class="hero">
         <div>
-          <span class="eyebrow">V1.0.5</span>
+          <span class="eyebrow">V1.0.7</span>
           <h2>Explore the research system.</h2>
-          <p>Chronology, civilizations, texts, water systems, comparisons, evidence, interpretations and hypotheses — connected to the canonical records in <code>data/</code>.</p>
+          <p>Chronology, civilizations, texts, water systems, comparisons, evidence, interpretations and hypotheses — now connected through a derived relationship graph built from canonical record references.</p>
         </div>
         <div class="hero-stats" id="heroStats">
           <div><strong id="recordCount">—</strong><span>records</span></div>
@@ -50,6 +50,7 @@
         <button class="tab active" data-view="explorer">Explorer</button>
         <button class="tab" data-view="timeline">Timeline</button>
         <button class="tab" data-view="comparisons">Comparisons</button>
+        <button class="tab" data-view="graph">Research Graph</button>
         <button class="tab" data-view="epistemic">GEI Research</button>
       </nav>
 
@@ -68,6 +69,25 @@
         <div id="comparisonGrid" class="comparison-grid"></div>
       </section>
 
+      <section id="graphView" class="view">
+        <div class="section-heading"><div><span class="eyebrow">RELATIONSHIP ENGINE</span><h2>GEI Research Graph</h2></div><span id="graphCount" class="muted">Building graph…</span></div>
+        <div class="graph-toolbar panel">
+          <div><strong>Derived connections</strong><p class="muted">Edges are inferred only from explicit canonical ID references. No relationship is added merely because two records look similar.</p></div>
+          <div class="graph-actions"><button id="graphReset" class="graph-btn">Reset</button><button id="graphFocus" class="graph-btn">Focus selected</button></div>
+        </div>
+        <div class="graph-layout">
+          <div class="graph-panel"><svg id="researchGraph" role="img" aria-label="GEI research relationship graph"></svg></div>
+          <aside class="graph-inspector panel">
+            <div class="eyebrow">RELATIONSHIP INSPECTOR</div>
+            <h3 id="graphInspectorTitle">Select a record</h3>
+            <p id="graphInspectorText" class="muted">Tap a node to see why it is connected to other canonical records.</p>
+            <div id="relationshipList" class="relationship-list"></div>
+          </aside>
+        </div>
+        <div class="section-heading graph-table-heading"><div><span class="eyebrow">RELATIONSHIP TABLE</span><h2>Explicit reference paths</h2></div></div>
+        <div id="relationshipTable" class="relationship-table"></div>
+      </section>
+
       <section id="epistemicView" class="view">
         <div class="section-heading"><div><span class="eyebrow">EPISTEMIC FIREWALL</span><h2>Evidence → Interpretation</h2></div></div>
         <div class="firewall">
@@ -80,8 +100,8 @@
     </main>
 
     <footer>
-      <span>GEI Research Interface V1.0.5</span>
-      <span>DATA → LOGIC → INTERFACE</span>
+      <span>GEI Research Interface V1.0.7</span>
+      <span>DATA → LOGIC → INTERFACE → DEPLOYMENT</span>
       <a href="https://github.com/jawa-dam/GEI-Research" target="_blank" rel="noopener">Open repository ↗</a>
     </footer>
   </div>
