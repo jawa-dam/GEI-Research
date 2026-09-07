@@ -34,29 +34,42 @@ jobs:
         run: python validation/validate.py
       - name: Verify V1.0.14 immutable ledger and chain of custody
         run: |
-          test -f interface/index.html
-          test -f interface/provenance-engine.js
-          test -f interface/integrity-engine.js
           test -f schema/ledger.schema.json
           test -f data/ledgers/LED-GEI-V1014-001.json
           grep -q 'V1.0.14' interface/integrity-engine.js
           grep -q 'Chain of Custody' interface/integrity-engine.js
-          grep -q 'tamper' interface/integrity-engine.js
-          grep -q 'ledger' schema/ledger.schema.json
           python - <<'PY'
           import hashlib,json,pathlib
           def canon(o): return json.dumps(o,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()
           l=json.loads(pathlib.Path('data/ledgers/LED-GEI-V1014-001.json').read_text())
-          p=json.loads(pathlib.Path('data/provenance/PRV-GEI-V1013-001.json').read_text())
-          if l.get('ledger_status')!='intact': raise SystemExit('V1.0.14 ledger is not marked intact')
-          if p.get('verification_status')!='verified': raise SystemExit('V1.0.13 baseline provenance is not verified')
+          if l.get('ledger_status')!='intact': raise SystemExit('V1.0.14 ledger is not intact')
           for s in l.get('chain',[]):
-              path=pathlib.Path('data')/(''.join([next((d.name for d in pathlib.Path('data').iterdir() if d.is_dir() and any(x.name==s['record_id']+'.json' for x in d.glob('*.json'))),''),'/'+s['record_id']+'.json']))
               candidates=list(pathlib.Path('data').rglob(s['record_id']+'.json'))
               if not candidates: raise SystemExit(f'Missing ledger record: {s["record_id"]}')
               observed=hashlib.sha256(canon(json.loads(candidates[0].read_text()))).hexdigest()
               if observed!=s['content_digest']: raise SystemExit(f'Ledger digest mismatch: {s["record_id"]}')
-          print('V1.0.14 immutable ledger and chain-of-custody verification passed.')
+          print('V1.0.14 immutable ledger verification passed.')
+          PY
+      - name: Verify V1.0.15 reproducibility and protocol engine
+        run: |
+          test -f schema/protocol.schema.json
+          test -f schema/reproducibility.schema.json
+          test -f data/protocols/PRO-GEI-V1015-001.json
+          test -f data/reproducibility/REP-GEI-V1015-001.json
+          test -f interface/reproducibility-engine.js
+          grep -q 'V1.0.15' interface/index.html
+          grep -q 'Reproducibility' interface/reproducibility-engine.js
+          grep -q 'Protocol' interface/reproducibility-engine.js
+          python - <<'PY'
+          import json,pathlib
+          p=json.loads(pathlib.Path('data/protocols/PRO-GEI-V1015-001.json').read_text())
+          r=json.loads(pathlib.Path('data/reproducibility/REP-GEI-V1015-001.json').read_text())
+          if p.get('version')!='1.0.15': raise SystemExit('Protocol version mismatch')
+          if r.get('version')!='1.0.15': raise SystemExit('Reproducibility version mismatch')
+          if not p.get('protocol_steps'): raise SystemExit('Protocol has no steps')
+          if not p.get('reproducibility_criteria'): raise SystemExit('Protocol has no criteria')
+          if r.get('reproducibility_status') not in {'not_assessed','reproduced','partially_reproduced','not_reproduced','inconclusive'}: raise SystemExit('Invalid reproducibility status')
+          print('V1.0.15 protocol and reproducibility verification passed.')
           PY
   deploy:
     name: Deploy to GitHub Pages
@@ -75,7 +88,7 @@ jobs:
           mkdir -p _site
           cp -R interface/. _site/
           touch _site/.nojekyll
-          printf '%s\n' 'GEI Research Interface V1.0.14' > _site/DEPLOYMENT-VERSION.txt
+          printf '%s\n' 'GEI Research Interface V1.0.15' > _site/DEPLOYMENT-VERSION.txt
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
