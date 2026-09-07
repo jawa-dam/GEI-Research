@@ -90,18 +90,23 @@ jobs:
           test -f schema/replication.schema.json
           test -f data/replications/RPL-GEI-V1016-001.json
           test -f interface/replication-engine.js
-          grep -q 'V1.0.16' interface/index.html
           grep -q 'Independent Replication' interface/replication-engine.js
           grep -q 'Cross-Operator' interface/replication-engine.js
           python - <<'PY'
-          import json,pathlib
+          import json,pathlib,re
           r=json.loads(pathlib.Path('data/replications/RPL-GEI-V1016-001.json').read_text())
+          i=pathlib.Path('interface/index.html').read_text()
           if r.get('version')!='1.0.16': raise SystemExit('Replication version mismatch')
           if len([o for o in r.get('operators',[]) if o.get('independent')])<2: raise SystemExit('Fewer than two independent operators declared')
           if r.get('replication_status')!='pending_independent_runs': raise SystemExit('Baseline must not claim successful replication')
           if r.get('comparison',{}).get('comparison_status')!='not_started': raise SystemExit('Baseline comparison must not claim completion')
-          print('V1.0.16 replication verification passed.')
+          if not re.search(r'V1\.0\.17', i): raise SystemExit('Current interface is not V1.0.17')
+          print('V1.0.16 replication integrity verified; current interface version verified separately as V1.0.17.')
           PY
+      - name: Verify current interface version
+        run: |
+          grep -q 'V1.0.17' interface/index.html
+          printf '%s\n' 'Current GEI Research Interface V1.0.17 verified.'
   deploy:
     name: Deploy to GitHub Pages
     needs: verify
