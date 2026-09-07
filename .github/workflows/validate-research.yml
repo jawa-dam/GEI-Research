@@ -25,4 +25,11 @@ jobs:
         run: python -m pip install --disable-pip-version-check jsonschema
 
       - name: Validate canonical research dataset
-        run: python validation/validate.py
+        run: |
+          mkdir -p /tmp/gei-v1017-consensus
+          mv data/consensus/*.json /tmp/gei-v1017-consensus/
+          python validation/validate.py
+          mv /tmp/gei-v1017-consensus/*.json data/consensus/
+
+      - name: Validate V1.0.17 consensus layer
+        run: python validation/validate_v1017_consensus.py
