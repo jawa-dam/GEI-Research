@@ -1,0 +1,36 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://github.com/jawa-dam/GEI-Research/blob/main/schema/ledger.schema.json",
+  "title":"GEI Research Immutable Ledger Record",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["id","type","title","status","version","ledger_status","record_ids","chain","created_at","actor","epistemic_firewall"],
+  "properties":{
+    "id":{"type":"string","pattern":"^LED-[A-Z0-9-]+-[0-9]{3}$"},
+    "type":{"const":"ledger"},
+    "title":{"type":"string","minLength":1},
+    "status":{"type":"string","enum":["draft","active","deprecated"]},
+    "version":{"type":"string","pattern":"^\\d+\\.\\d+\\.\\d+$"},
+    "ledger_status":{"type":"string","enum":["intact","warning","broken"]},
+    "record_ids":{"type":"array","minItems":1,"items":{"type":"string","pattern":"^[A-Z]{3}(?:-[A-Z0-9]+)+-[0-9]{3}$"}},
+    "chain":{"type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"required":["state_id","record_id","record_version","content_digest","digest_algorithm","digest_scope","provenance_id","verification_status","timestamp"],"properties":{
+      "state_id":{"type":"string","pattern":"^STATE-[A-Z0-9-]+-[0-9]{3}$"},
+      "record_id":{"type":"string","pattern":"^[A-Z]{3}(?:-[A-Z0-9]+)+-[0-9]{3}$"},
+      "record_version":{"type":"string","pattern":"^\\d+\\.\\d+\\.\\d+$"},
+      "content_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+      "parent_state_id":{"type":"string","pattern":"^STATE-[A-Z0-9-]+-[0-9]{3}$"},
+      "parent_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+      "provenance_id":{"type":"string","pattern":"^PRV-[A-Z0-9-]+-[0-9]{3}$"},
+      "commit_sha":{"type":"string","pattern":"^[0-9a-f]{40}$"},
+      "verification_status":{"type":"string","enum":["unverified","verified","disputed"]},
+      "timestamp":{"type":"string","format":"date-time"},
+      "change_type":{"type":"string","enum":["baseline","created","updated","revised","verified","restored","deprecated","corrected","retracted","challenged"]},
+      "change_reason":{"type":"string"}
+    }}},
+    "created_at":{"type":"string","format":"date-time"},
+    "actor":{"type":"string","minLength":1},
+    "epistemic_firewall":{"type":"string","minLength":1},
+    "integrity_notes":{"type":"string"},
+    "notes":{"type":"string"}
+  }
+}
