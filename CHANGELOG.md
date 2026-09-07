@@ -2,6 +2,18 @@
 
 All notable changes to GEI-Research are recorded here.
 
+## V1.0.12 — GEI Research Integrity & Provenance Engine
+
+- Added canonical **provenance** records for research-history and verification events.
+- Added `provenance.schema.json` with event type, target records, version history, reason, actor, timestamp, verification status, and integrity notes.
+- Added explicit provenance links to the GEI hypothesis and outcome evaluation.
+- Added provenance validation for target references and change-event version requirements.
+- Added a dedicated **Integrity & Provenance** interface inspector.
+- Added provenance visibility for who, what, when, why, version, and verification state.
+- Preserved the epistemic firewall: provenance explains the research record but does not constitute substantive evidence.
+- Preserved the rule: **CONNECTED ≠ SUPPORTED ≠ CORROBORATED ≠ CONFIRMED**.
+- Extended deployment verification and GitHub Pages versioning to V1.0.12.
+
 ## V1.0.11 — GEI Research Outcome Intelligence Engine
 
 - Added canonical **outcome evaluation** records.
