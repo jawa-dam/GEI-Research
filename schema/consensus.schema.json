@@ -1,0 +1,16 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://github.com/jawa-dam/GEI-Research/blob/main/schema/consensus.schema.json",
+  "title":"GEI Research Consensus & Disagreement Record",
+  "type":"object","additionalProperties":false,
+  "required":["id","type","title","status","version","replication_ids","consensus_dimensions","disagreements","consensus_status","epistemic_firewall"],
+  "properties":{
+    "id":{"type":"string","pattern":"^CON-[A-Z0-9-]+-[0-9]{3}$"},"type":{"const":"consensus"},"title":{"type":"string","minLength":1},"status":{"type":"string","enum":["draft","active","deprecated"]},"version":{"type":"string","pattern":"^\\d+\\.\\d+\\.\\d+$"},
+    "replication_ids":{"type":"array","minItems":1,"items":{"type":"string","pattern":"^RPL-[A-Z0-9-]+-[0-9]{3}$"}},
+    "consensus_dimensions":{"type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"required":["dimension_id","dimension","status","basis"],"properties":{"dimension_id":{"type":"string","pattern":"^DIM-[A-Z0-9-]+-[0-9]{3}$"},"dimension":{"type":"string","enum":["procedural","observational","evidence","interpretive","hypothesis","alternative_explanation"]},"status":{"type":"string","enum":["agreement","partial_agreement","disagreement","not_assessed"]},"basis":{"type":"string"},"operator_positions":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["operator_id","position"],"properties":{"operator_id":{"type":"string","pattern":"^OP-[A-Z0-9-]+-[0-9]{3}$"},"position":{"type":"string"},"evidence_ids":{"type":"array","items":{"type":"string","pattern":"^[A-Z]{3}(?:-[A-Z0-9]+)+-[0-9]{3}$"}},"notes":{"type":"string"}}}},"notes":{"type":"string"}}}},
+    "disagreements":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["disagreement_id","category","description","positions","status"],"properties":{"disagreement_id":{"type":"string","pattern":"^DIS-[A-Z0-9-]+-[0-9]{3}$"},"category":{"type":"string","enum":["protocol","observation","evidence_classification","interpretation","hypothesis","alternative_explanation","unresolved"]},"description":{"type":"string"},"positions":{"type":"array","minItems":2,"items":{"type":"object","additionalProperties":false,"required":["operator_id","position"],"properties":{"operator_id":{"type":"string","pattern":"^OP-[A-Z0-9-]+-[0-9]{3}$"},"position":{"type":"string"},"evidence_ids":{"type":"array","items":{"type":"string","pattern":"^[A-Z]{3}(?:-[A-Z0-9]+)+-[0-9]{3}$"}}}}},"status":{"type":"string","enum":["open","resolved","unresolved","superseded"]},"resolution":{"type":"string"},"evidence_ids":{"type":"array","items":{"type":"string","pattern":"^[A-Z]{3}(?:-[A-Z0-9]+)+-[0-9]{3}$"}},"notes":{"type":"string"}}}},
+    "consensus_status":{"type":"string","enum":["not_assessed","emerging_consensus","mixed","substantial_disagreement","inconclusive"]},
+    "consensus_summary":{"type":"string"},"consensus_map":{"type":"object","additionalProperties":{"type":"string"}},"limitations":{"type":"array","items":{"type":"string"}},"provenance_ids":{"type":"array","items":{"type":"string","pattern":"^PRV-[A-Z0-9-]+-[0-9]{3}$"}},
+    "epistemic_firewall":{"type":"string","minLength":1},"notes":{"type":"string"}
+  }
+}
