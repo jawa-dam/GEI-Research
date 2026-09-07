@@ -8,6 +8,7 @@
   "outcome_ids":["OUT-GEI-GEN1-001"],
   "result_ids":["RES-GEI-GEN1-001"],
   "hypothesis_ids":["HYP-GEI-001"],
+  "provenance_ids":["PRV-GEI-V1012-001"],
   "assessment":"The current outcome is appropriately classified as requiring further testing. Existing structure and traceability are useful, but the available record set does not establish that the hydraulic interpretation is the best explanation of Genesis 1.",
   "expected_state":"A sufficiently tested hypothesis would show reproducible explanatory advantages against defined non-hydraulic alternatives and passage-level evidence.",
   "observed_state":"The investigation has a defined protocol and provisional result, but passage-level observations, broader comparative evidence, counterevidence, and alternative-explanation testing remain incomplete.",
