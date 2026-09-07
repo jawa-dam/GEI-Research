@@ -1,0 +1,16 @@
+{
+  "id":"PRV-GEI-V1012-001",
+  "type":"provenance",
+  "title":"V1.0.12 Provenance Baseline for GEI Research Integrity",
+  "status":"active",
+  "version":"1.0.12",
+  "event_type":"verified",
+  "record_ids":["HYP-GEI-001","EVA-GEI-GEN1-001"],
+  "previous_versions":["1.0.11"],
+  "new_versions":["1.0.11"],
+  "reason":"Establish an explicit provenance baseline for the hypothesis and outcome evaluation at the V1.0.12 integrity checkpoint, preserving traceability without converting interpretation into established fact.",
+  "actor":"GEI Research System",
+  "timestamp":"2026-09-06T00:00:00Z",
+  "verification_status":"verified",
+  "integrity_notes":"This record documents provenance and verification state only. It does not add substantive evidence or confirm the GEI hypothesis. CONNECTED remains distinct from SUPPORTED, CORROBORATED, and CONFIRMED."
+}
