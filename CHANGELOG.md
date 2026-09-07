@@ -2,6 +2,19 @@
 
 All notable changes to GEI-Research are recorded here.
 
+## V1.0.12 — Provenance Intelligence & Audit Trail
+
+- Extended the V1.0.12 provenance layer from event display into a canonical **audit-trail system**.
+- Added `audit.schema.json` for machine-readable provenance integrity audits.
+- Added canonical `AUD-GEI-V1012-001` baseline audit record.
+- Added live provenance intelligence checks for target resolution, reverse provenance linkage, verification consistency, change-event version history, and disputed provenance.
+- Added a versioned Change Ledger for provenance checks and audit events.
+- Added audit summary metrics for provenance events, verified/disputed states, and live PASS/WARN/FAIL status.
+- Extended validation to enforce audit summaries, check counts, audit-status consistency, and audit reference integrity.
+- Extended GitHub Pages deployment verification to require the audit schema, canonical audit record, and provenance intelligence engine.
+- Preserved the epistemic firewall: an audit verifies traceability and integrity metadata; it does not establish that a GEI interpretation is true.
+- Preserved the rule: **CONNECTED ≠ SUPPORTED ≠ CORROBORATED ≠ CONFIRMED**.
+
 ## V1.0.12 — GEI Research Integrity & Provenance Engine
 
 - Added canonical **provenance** records for research-history and verification events.
