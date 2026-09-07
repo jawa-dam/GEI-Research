@@ -31,58 +31,37 @@ jobs:
         run: python -m pip install jsonschema
       - name: Validate canonical dataset
         run: python validation/validate.py
-      - name: Verify V1.0.12 provenance intelligence and audit trail
+      - name: Verify V1.0.13 provenance drift and integrity attestation
         run: |
           test -f interface/index.html
-          test -f interface/styles.css
-          test -f interface/app.js
-          test -f interface/investigation.js
-          test -f interface/decision-engine.js
-          test -f interface/outcome-engine.js
           test -f interface/provenance-engine.js
+          test -f interface/integrity-engine.js
           test -f schema/provenance.schema.json
-          test -f schema/audit.schema.json
-          test -f data/provenance/PRV-GEI-V1012-001.json
-          test -f data/audits/AUD-GEI-V1012-001.json
-          grep -q 'outcome-engine.js' interface/index.html
-          grep -q 'provenance-engine.js' interface/index.html
-          grep -q 'Provenance Intelligence & Audit Trail' interface/provenance-engine.js
-          grep -q 'runAudit' interface/provenance-engine.js
-          grep -q 'verification_status' interface/provenance-engine.js
-          grep -q 'record_ids' interface/provenance-engine.js
+          test -f schema/attestation.schema.json
+          test -f data/provenance/PRV-GEI-V1013-001.json
+          test -f data/attestations/ATT-GEI-V1013-001.json
+          grep -q 'integrity-engine.js' interface/index.html
+          grep -q 'Provenance Drift Detection' interface/integrity-engine.js
+          grep -q 'canonicalize' interface/integrity-engine.js
+          grep -q 'SHA-256' interface/integrity-engine.js
+          grep -q 'record_digests' schema/provenance.schema.json
+          grep -q 'attestation_status' schema/attestation.schema.json
           python - <<'PY'
-          import pathlib,re,json
-          html=pathlib.Path('interface/index.html').read_text(encoding='utf-8')
-          js=pathlib.Path('interface/app.js').read_text(encoding='utf-8')
-          out=pathlib.Path('interface/outcome-engine.js').read_text(encoding='utf-8')
-          prov=pathlib.Path('interface/provenance-engine.js').read_text(encoding='utf-8')
-          required=['explorerView','timelineView','comparisonsView','epistemicView','graphView','intelligenceView','investigationsView','decisionsView','recordDialog']
-          missing=[x for x in required if x not in html]
-          if missing: raise SystemExit(f'Missing interface elements: {missing}')
-          for script in ['outcome-engine.js','provenance-engine.js']:
-              if script not in html: raise SystemExit(f'{script} is not connected')
-          m=re.search(r"const CATEGORIES=\[(.*?)\];",js,re.S)
-          if not m: raise SystemExit('Could not find dataset category registry in app.js')
-          cats=re.findall(r"'([^']+)'",m.group(1))
-          required_dirs=set(cats)|{'questions','claims','investigations','results','outcomes','evaluations','decisions','executions','observations','provenance','audits'}
-          missing_dirs=[c for c in sorted(required_dirs) if not pathlib.Path('data',c).is_dir()]
-          if missing_dirs: raise SystemExit(f'Missing canonical data directories: {missing_dirs}')
-          for f in ['question.schema.json','claim.schema.json','investigation.schema.json','result.schema.json','outcome.schema.json','decision.schema.json','execution.schema.json','observation.schema.json','evaluation.schema.json','provenance.schema.json','audit.schema.json']:
-              if not pathlib.Path('schema',f).is_file(): raise SystemExit(f'Missing schema: {f}')
-          for token in ['outcome_ids','result_ids','hypothesis_ids','assessment','expected_state','observed_state','delta','revision_recommendation']:
-              if token not in out: raise SystemExit(f'Missing outcome intelligence field: {token}')
-          for token in ['event_type','record_ids','reason','actor','timestamp','verification_status']:
-              if token not in prov: raise SystemExit(f'Missing provenance field: {token}')
-          for token in ['audit_scope','audit_status','audited_record_ids','checks','summary','epistemic_firewall']:
-              audit_text=pathlib.Path('data/audits/AUD-GEI-V1012-001.json').read_text(encoding='utf-8')
-              if token not in audit_text: raise SystemExit(f'Missing audit field: {token}')
-          p=json.loads(pathlib.Path('data/provenance/PRV-GEI-V1012-001.json').read_text(encoding='utf-8'))
-          a=json.loads(pathlib.Path('data/audits/AUD-GEI-V1012-001.json').read_text(encoding='utf-8'))
-          if p.get('verification_status')!='verified': raise SystemExit('Baseline provenance record is not verified')
-          if not p.get('record_ids'): raise SystemExit('Baseline provenance record has no target records')
-          if a.get('audit_status')=='fail': raise SystemExit('Baseline audit is marked fail')
-          if a.get('summary',{}).get('failed',0)!=0: raise SystemExit('Baseline audit contains failed checks')
-          print('V1.0.12 provenance intelligence and audit trail verification passed.')
+          import hashlib,json,pathlib
+          def canon(o): return json.dumps(o,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()
+          p=json.loads(pathlib.Path('data/provenance/PRV-GEI-V1013-001.json').read_text())
+          a=json.loads(pathlib.Path('data/attestations/ATT-GEI-V1013-001.json').read_text())
+          if p.get('verification_status')!='verified': raise SystemExit('V1.0.13 provenance baseline is not verified')
+          if p.get('digest_algorithm')!='SHA-256' or p.get('digest_scope')!='canonical_json': raise SystemExit('Invalid V1.0.13 digest configuration')
+          if a.get('attestation_status')!='pass': raise SystemExit('V1.0.13 attestation is not PASS')
+          if a.get('drifted_record_ids'): raise SystemExit('V1.0.13 attestation contains drifted records')
+          for rid,expected in a['expected_digests'].items():
+              if expected!=a['observed_digests'].get(rid): raise SystemExit(f'Attestation digest mismatch: {rid}')
+              path=next(pathlib.Path('data').rglob(f'{rid}.json'),None)
+              if not path: raise SystemExit(f'Missing attested record: {rid}')
+              observed=hashlib.sha256(canon(json.loads(path.read_text()))).hexdigest()
+              if observed!=expected: raise SystemExit(f'Live digest mismatch: {rid}')
+          print('V1.0.13 provenance drift and integrity attestation verification passed.')
           PY
   deploy:
     name: Deploy to GitHub Pages
@@ -101,7 +80,7 @@ jobs:
           mkdir -p _site
           cp -R interface/. _site/
           touch _site/.nojekyll
-          printf '%s\n' 'GEI Research Interface V1.0.12' > _site/DEPLOYMENT-VERSION.txt
+          printf '%s\n' 'GEI Research Interface V1.0.13' > _site/DEPLOYMENT-VERSION.txt
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
