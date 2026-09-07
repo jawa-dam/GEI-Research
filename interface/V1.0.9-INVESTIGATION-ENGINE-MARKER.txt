@@ -1,0 +1,10 @@
+GEI-Research V1.0.9
+GEI Research Investigation Engine
+
+Pipeline:
+RESEARCH QUESTION → CLAIM → SOURCES → EVIDENCE → COMPARISONS → INTERPRETATION → HYPOTHESIS → TEST → RESULT → OUTCOME
+
+Governance:
+CONNECTED ≠ SUPPORTED ≠ CORROBORATED ≠ CONFIRMED
+
+The investigation engine records alternative explanations and counterevidence and permits inconclusive outcomes.
