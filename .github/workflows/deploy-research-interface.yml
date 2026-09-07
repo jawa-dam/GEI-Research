@@ -7,6 +7,7 @@ on:
       - 'data/**'
       - 'schema/**'
       - 'validation/**'
+      - 'research/**'
       - '.github/workflows/deploy-research-interface.yml'
   workflow_dispatch:
 permissions:
@@ -31,37 +32,31 @@ jobs:
         run: python -m pip install jsonschema
       - name: Validate canonical dataset
         run: python validation/validate.py
-      - name: Verify V1.0.13 provenance drift and integrity attestation
+      - name: Verify V1.0.14 immutable ledger and chain of custody
         run: |
           test -f interface/index.html
           test -f interface/provenance-engine.js
           test -f interface/integrity-engine.js
-          test -f schema/provenance.schema.json
-          test -f schema/attestation.schema.json
-          test -f data/provenance/PRV-GEI-V1013-001.json
-          test -f data/attestations/ATT-GEI-V1013-001.json
-          grep -q 'integrity-engine.js' interface/index.html
-          grep -q 'Provenance Drift Detection' interface/integrity-engine.js
-          grep -q 'canonicalize' interface/integrity-engine.js
-          grep -q 'SHA-256' interface/integrity-engine.js
-          grep -q 'record_digests' schema/provenance.schema.json
-          grep -q 'attestation_status' schema/attestation.schema.json
+          test -f schema/ledger.schema.json
+          test -f data/ledgers/LED-GEI-V1014-001.json
+          grep -q 'V1.0.14' interface/integrity-engine.js
+          grep -q 'Chain of Custody' interface/integrity-engine.js
+          grep -q 'tamper' interface/integrity-engine.js
+          grep -q 'ledger' schema/ledger.schema.json
           python - <<'PY'
           import hashlib,json,pathlib
           def canon(o): return json.dumps(o,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()
+          l=json.loads(pathlib.Path('data/ledgers/LED-GEI-V1014-001.json').read_text())
           p=json.loads(pathlib.Path('data/provenance/PRV-GEI-V1013-001.json').read_text())
-          a=json.loads(pathlib.Path('data/attestations/ATT-GEI-V1013-001.json').read_text())
-          if p.get('verification_status')!='verified': raise SystemExit('V1.0.13 provenance baseline is not verified')
-          if p.get('digest_algorithm')!='SHA-256' or p.get('digest_scope')!='canonical_json': raise SystemExit('Invalid V1.0.13 digest configuration')
-          if a.get('attestation_status')!='pass': raise SystemExit('V1.0.13 attestation is not PASS')
-          if a.get('drifted_record_ids'): raise SystemExit('V1.0.13 attestation contains drifted records')
-          for rid,expected in a['expected_digests'].items():
-              if expected!=a['observed_digests'].get(rid): raise SystemExit(f'Attestation digest mismatch: {rid}')
-              path=next(pathlib.Path('data').rglob(f'{rid}.json'),None)
-              if not path: raise SystemExit(f'Missing attested record: {rid}')
-              observed=hashlib.sha256(canon(json.loads(path.read_text()))).hexdigest()
-              if observed!=expected: raise SystemExit(f'Live digest mismatch: {rid}')
-          print('V1.0.13 provenance drift and integrity attestation verification passed.')
+          if l.get('ledger_status')!='intact': raise SystemExit('V1.0.14 ledger is not marked intact')
+          if p.get('verification_status')!='verified': raise SystemExit('V1.0.13 baseline provenance is not verified')
+          for s in l.get('chain',[]):
+              path=pathlib.Path('data')/(''.join([next((d.name for d in pathlib.Path('data').iterdir() if d.is_dir() and any(x.name==s['record_id']+'.json' for x in d.glob('*.json'))),''),'/'+s['record_id']+'.json']))
+              candidates=list(pathlib.Path('data').rglob(s['record_id']+'.json'))
+              if not candidates: raise SystemExit(f'Missing ledger record: {s["record_id"]}')
+              observed=hashlib.sha256(canon(json.loads(candidates[0].read_text()))).hexdigest()
+              if observed!=s['content_digest']: raise SystemExit(f'Ledger digest mismatch: {s["record_id"]}')
+          print('V1.0.14 immutable ledger and chain-of-custody verification passed.')
           PY
   deploy:
     name: Deploy to GitHub Pages
@@ -80,7 +75,7 @@ jobs:
           mkdir -p _site
           cp -R interface/. _site/
           touch _site/.nojekyll
-          printf '%s\n' 'GEI Research Interface V1.0.13' > _site/DEPLOYMENT-VERSION.txt
+          printf '%s\n' 'GEI Research Interface V1.0.14' > _site/DEPLOYMENT-VERSION.txt
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

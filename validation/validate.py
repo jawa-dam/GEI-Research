@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""GEI-Research V1.0.13 validation engine."""
+"""GEI-Research V1.0.14 validation engine."""
 from __future__ import annotations
-import json,re,sys
+import hashlib,json,re
 from pathlib import Path
-from jsonschema import Draft202012Validator, RefResolver
+from jsonschema import Draft202012Validator,RefResolver
 ROOT=Path(__file__).resolve().parents[1];DATA=ROOT/'data';SCHEMA=ROOT/'schema'
-ID_RE=re.compile(r'^[A-Z]{3}(?:-[A-Z0-9]+)+-[0-9]{3}$');SHA_RE=re.compile(r'^[0-9a-f]{64}$')
-TYPE_TO_SCHEMA={'chronology':'chronology.schema.json','civilization':'civilization.schema.json','region':'region.schema.json','text':'text.schema.json','passage':'passage.schema.json','cosmology':'cosmology.schema.json','water':'water.schema.json','technology':'technology.schema.json','linguistics':'linguistics.schema.json','source':'source.schema.json','evidence':'evidence.schema.json','comparison':'comparison.schema.json','interpretation':'interpretation.schema.json','hypothesis':'hypothesis.schema.json','question':'question.schema.json','claim':'claim.schema.json','investigation':'investigation.schema.json','result':'result.schema.json','outcome':'outcome.schema.json','decision':'decision.schema.json','execution':'execution.schema.json','observation':'observation.schema.json','evaluation':'evaluation.schema.json','provenance':'provenance.schema.json','audit':'audit.schema.json','attestation':'attestation.schema.json'}
+ID_RE=re.compile(r'^[A-Z]{3}(?:-[A-Z0-9]+)+-[0-9]{3}$');SHA_RE=re.compile(r'^[0-9a-f]{64}$');STATE_RE=re.compile(r'^STATE-[A-Z0-9-]+-[0-9]{3}$')
+TYPE_TO_SCHEMA={'chronology':'chronology.schema.json','civilization':'civilization.schema.json','region':'region.schema.json','text':'text.schema.json','passage':'passage.schema.json','cosmology':'cosmology.schema.json','water':'water.schema.json','technology':'technology.schema.json','linguistics':'linguistics.schema.json','source':'source.schema.json','evidence':'evidence.schema.json','comparison':'comparison.schema.json','interpretation':'interpretation.schema.json','hypothesis':'hypothesis.schema.json','question':'question.schema.json','claim':'claim.schema.json','investigation':'investigation.schema.json','result':'result.schema.json','outcome':'outcome.schema.json','decision':'decision.schema.json','execution':'execution.schema.json','observation':'observation.schema.json','evaluation':'evaluation.schema.json','provenance':'provenance.schema.json','audit':'audit.schema.json','attestation':'attestation.schema.json','ledger':'ledger.schema.json'}
 ALLOWED_CONFIDENCE={f'C{i}' for i in range(6)};ALLOWED_EVIDENCE={f'E{i}' for i in range(1,6)}
-REFERENCE_KEYS={'related_ids','source_ids','evidence_ids','subject_ids','comparison_ids','passage_ids','text_ids','civilization_ids','region_ids','chronology_ids','water_ids','technology_ids','linguistic_ids','interpretation_ids','hypothesis_ids','supports_ids','challenges_ids','tests_ids','result_ids','question_ids','investigation_ids','claim_ids','counterevidence_ids','outcome_ids','evaluation_ids','decision_ids','execution_ids','observation_ids','provenance_ids','record_ids','audited_record_ids','attestation_ids'}
+REFERENCE_KEYS={'related_ids','source_ids','evidence_ids','subject_ids','comparison_ids','passage_ids','text_ids','civilization_ids','region_ids','chronology_ids','water_ids','technology_ids','linguistic_ids','interpretation_ids','hypothesis_ids','supports_ids','challenges_ids','tests_ids','result_ids','question_ids','investigation_ids','claim_ids','counterevidence_ids','outcome_ids','evaluation_ids','decision_ids','execution_ids','observation_ids','provenance_ids','provenance_id','record_ids','audited_record_ids','attestation_ids'}
 def load_json(path):
     with path.open(encoding='utf-8') as f:return json.load(f)
 def all_records():return sorted(p for p in DATA.rglob('*.json') if p.name!='validation-rules.json')
@@ -18,9 +18,6 @@ def walk_refs(value,key=None):
     elif isinstance(value,list):
         for item in value:yield from walk_refs(item,key)
     elif isinstance(value,str) and key in REFERENCE_KEYS and ID_RE.fullmatch(value):yield value
-def canonical_digest(obj):
-    raw=json.dumps(obj,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode('utf-8');import hashlib
-    return hashlib.sha256(raw).hexdigest()
 def main():
     errors=[];warnings=[];records={};parsed={}
     for path in all_records():
@@ -37,19 +34,17 @@ def main():
         if not schema_name:errors.append(f'{rel}: unsupported or missing type: {rtype!r}');continue
         try:
             schema=load_json(SCHEMA/schema_name);validator=Draft202012Validator(schema,resolver=RefResolver((SCHEMA/schema_name).as_uri(),schema))
-            for problem in validator.iter_errors(obj):
-                loc='.'.join(str(x) for x in problem.absolute_path);errors.append(f'{rel}: schema: {loc}: {problem.message}')
+            for problem in validator.iter_errors(obj):errors.append(f"{rel}: schema: {'.'.join(str(x) for x in problem.absolute_path)}: {problem.message}")
         except Exception as exc:errors.append(f'{rel}: schema engine failure using {schema_name}: {exc}')
         if 'confidence' in obj and obj['confidence'] not in ALLOWED_CONFIDENCE:errors.append(f"{rel}: invalid confidence {obj['confidence']!r}")
         if 'evidence_level' in obj and obj['evidence_level'] not in ALLOWED_EVIDENCE:errors.append(f"{rel}: invalid evidence_level {obj['evidence_level']!r}")
     for rel,obj in parsed.items():
-        refs=list(walk_refs(obj))
-        for ref in refs:
+        for ref in walk_refs(obj):
             if ref not in records:errors.append(f'{rel}: broken reference: {ref}')
             elif ref==obj.get('id'):warnings.append(f'{rel}: self-reference: {ref}')
         if obj.get('status')=='deprecated':
             for other_rel,other in parsed.items():
-                if other_rel!=rel and obj.get('id') in set(walk_refs(other)):errors.append(f"{other_rel}: references deprecated record {obj.get('id')}")
+                if other_rel!=rel and obj.get('id') in set(walk_refs(other)):errors.append(f'{other_rel}: references deprecated record {obj.get("id")}')
         if obj.get('type')=='comparison' and isinstance(obj.get('subjects'),list) and len(obj.get('subjects',[]))<2:errors.append(f'{rel}: comparison must contain at least two subjects')
         if obj.get('type') in {'interpretation','hypothesis','claim'} and not any(obj.get(k) for k in ('source_ids','evidence_ids','subject_ids','question_ids')):warnings.append(f'{rel}: no explicit source, evidence, subject, or question linkage')
         if obj.get('type')=='hypothesis' and obj.get('status')=='confirmed':errors.append(f'{rel}: hypothesis cannot use status=confirmed')
@@ -71,31 +66,51 @@ def main():
             if obj.get('event_type') in {'updated','revised','restored'} and not obj.get('previous_versions'):errors.append(f'{rel}: change event requires previous_versions')
             if obj.get('event_type') in {'updated','revised'} and not obj.get('new_versions'):errors.append(f'{rel}: change event requires new_versions')
             if obj.get('verification_status')=='disputed':warnings.append(f'{rel}: provenance record is disputed')
-            digests=obj.get('record_digests',{})
-            if digests:
+            for rid,digest in obj.get('record_digests',{}).items():
                 if obj.get('digest_algorithm')!='SHA-256' or obj.get('digest_scope')!='canonical_json':errors.append(f'{rel}: digest baseline must use SHA-256 canonical_json')
-                for rid,digest in digests.items():
-                    if not SHA_RE.fullmatch(digest):errors.append(f'{rel}: invalid SHA-256 digest for {rid}')
-                    if rid not in records:errors.append(f'{rel}: digest target does not exist: {rid}')
+                if not SHA_RE.fullmatch(digest):errors.append(f'{rel}: invalid SHA-256 digest for {rid}')
+                if rid not in records:errors.append(f'{rel}: digest target does not exist: {rid}')
         if obj.get('type')=='audit':
             summary=obj.get('summary',{});checks=obj.get('checks',[])
             if summary.get('checks')!=len(checks):errors.append(f'{rel}: audit summary.checks does not match checks length')
-            if summary.get('passed',0)+summary.get('warnings',0)+summary.get('failed',0)!=len(checks):errors.append(f'{rel}: audit summary counts do not equal checks length')
+            if sum(summary.get(k,0) for k in ('passed','warnings','failed'))!=len(checks):errors.append(f'{rel}: audit summary counts do not equal checks length')
             if obj.get('audit_status')=='pass' and summary.get('failed',0)>0:errors.append(f'{rel}: audit_status=pass cannot contain failed checks')
             if obj.get('audit_status')=='fail' and summary.get('failed',0)==0:errors.append(f'{rel}: audit_status=fail requires at least one failed check')
             if any(c.get('status')=='fail' for c in checks) and obj.get('audit_status')!='fail':errors.append(f'{rel}: failed audit check requires audit_status=fail')
         if obj.get('type')=='attestation':
-            exp=obj.get('expected_digests',{});obs=obj.get('observed_digests',{});drift=obj.get('drifted_record_ids',[])
-            baseline=records.get(obj.get('baseline_provenance_id'))
+            exp=obj.get('expected_digests',{});obs=obj.get('observed_digests',{});drift=obj.get('drifted_record_ids',[]);baseline=records.get(obj.get('baseline_provenance_id'))
             if not baseline or parsed.get(baseline,{}).get('type')!='provenance':errors.append(f"{rel}: baseline_provenance_id must resolve to a provenance record")
-            if set(exp)!=set(obs):errors.append(f'{rel}: expected_digests and observed_digests keys must match')
-            if set(exp)!=set(obj.get('record_ids',[])):errors.append(f'{rel}: digest keys must match record_ids')
-            actual_drift=sorted(r for r in exp if exp.get(r)!=obs.get(r))
-            if sorted(drift)!=actual_drift:errors.append(f'{rel}: drifted_record_ids does not match digest mismatches')
+            if set(exp)!=set(obs) or set(exp)!=set(obj.get('record_ids',[])):errors.append(f'{rel}: attestation digest keys must match record_ids and each other')
+            actual=sorted(r for r in exp if exp.get(r)!=obs.get(r))
+            if sorted(drift)!=actual:errors.append(f'{rel}: drifted_record_ids does not match digest mismatches')
             if not drift and obj.get('attestation_status') in {'drift','fail'}:errors.append(f'{rel}: no digest drift but attestation_status={obj.get("attestation_status")}')
             if drift and obj.get('attestation_status') not in {'drift','fail'}:errors.append(f'{rel}: digest drift requires attestation_status=drift or fail')
-            if any(not SHA_RE.fullmatch(x) for x in list(exp.values())+list(obs.values())):errors.append(f'{rel}: attestation contains an invalid SHA-256 digest')
-    print('GEI-Research Validation Engine V1.0.13');print(f'Records scanned: {len(parsed)}');print(f'Errors: {len(errors)}');print(f'Warnings: {len(warnings)}')
+    for rel,obj in parsed.items():
+        if obj.get('type')!='ledger':continue
+        chain=obj.get('chain',[]);states={};last_by_record={}
+        for s in chain:
+            sid=s.get('state_id');rid=s.get('record_id')
+            if sid in states:errors.append(f'{rel}: duplicate ledger state {sid}')
+            states[sid]=s
+            if not STATE_RE.fullmatch(sid or ''):errors.append(f'{rel}: invalid state_id {sid}')
+            if rid not in obj.get('record_ids',[]):errors.append(f'{rel}: state {sid} targets unlisted record {rid}')
+            if not SHA_RE.fullmatch(s.get('content_digest','')):errors.append(f'{rel}: invalid content_digest for {sid}')
+            previous=last_by_record.get(rid)
+            if previous:
+                if not s.get('parent_state_id'):errors.append(f'{rel}: revision state {sid} lacks parent_state_id')
+                elif s.get('parent_state_id')!=previous.get('state_id'):errors.append(f'{rel}: state {sid} parent_state_id must point to prior state for {rid}')
+                if s.get('parent_digest')!=previous.get('content_digest'):errors.append(f'{rel}: state {sid} parent_digest does not match prior state')
+                if not SHA_RE.fullmatch(s.get('parent_digest','')):errors.append(f'{rel}: invalid parent_digest for {sid}')
+            else:
+                if s.get('parent_state_id') or s.get('parent_digest'):warnings.append(f'{rel}: root state {sid} contains parent linkage')
+            prov=s.get('provenance_id')
+            if prov not in records or parsed.get(records.get(prov),{}).get('type')!='provenance':errors.append(f'{rel}: state {sid} provenance_id does not resolve to provenance')
+            last_by_record[rid]=s
+        if not chain:errors.append(f'{rel}: ledger chain cannot be empty')
+        if len(last_by_record)!=len(obj.get('record_ids',[])):errors.append(f'{rel}: ledger does not contain a state for every listed record')
+        for rid,s in last_by_record.items():
+            if s.get('verification_status')!='verified':warnings.append(f'{rel}: latest state for {rid} is not verified')
+    print('GEI-Research Validation Engine V1.0.14');print(f'Records scanned: {len(parsed)}');print(f'Errors: {len(errors)}');print(f'Warnings: {len(warnings)}')
     for x in errors:print(f'ERROR: {x}')
     for x in warnings:print(f'WARNING: {x}')
     if errors:print('VALIDATION: FAIL');return 1
