@@ -46,7 +46,7 @@ jobs:
           test -f interface/app.js
           grep -q 'styles.css' interface/index.html
           grep -q 'app.js' interface/index.html
-          grep -q 'api.github.com/repos/jawa-dam/GEI-Research/contents/data' interface/app.js
+          grep -q "const API = \`https://api.github.com/repos/\${OWNER}/\${REPO}/contents/data\`" interface/app.js
           python - <<'PY'
           import pathlib, re
           html = pathlib.Path('interface/index.html').read_text(encoding='utf-8')
