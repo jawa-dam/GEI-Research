@@ -1,0 +1,19 @@
+{
+  "id": "SRC-WTR-001",
+  "type": "source",
+  "title": "Ancient Egyptian Science & Technology",
+  "status": "active",
+  "version": "1.0.0",
+  "source_type": "secondary",
+  "title_full": "Ancient Egyptian Science & Technology",
+  "author": "Joshua J. Mark",
+  "date": "2016-11-09",
+  "publisher": "World History Encyclopedia",
+  "url": "https://www.worldhistory.org/article/967/ancient-egyptian-science--technology/",
+  "accessed": "2026-09-06",
+  "citation": "Mark, Joshua J. \"Ancient Egyptian Science & Technology.\" World History Encyclopedia, 09 November 2016.",
+  "language": "English",
+  "license": "Creative Commons Attribution-NonCommercial-ShareAlike",
+  "reliability_notes": "Secondary historical overview reviewed by the World History Encyclopedia editorial team; useful as comparative context but not sufficient by itself to establish claims about Genesis 1 or authorial intent.",
+  "notes": "Used in GEI-Research as comparative context for ancient Egyptian engineering, agriculture, irrigation, mathematics, and water-management technology."
+}
