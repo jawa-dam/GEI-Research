@@ -47,7 +47,7 @@ def main():
         if obj.get("status")=="deprecated":
             for other_rel,other in parsed.items():
                 if other_rel!=rel and obj.get("id") in set(walk_refs(other)):errors.append(f"{other_rel}: references deprecated record {obj.get('id')}")
-        if obj.get("type")=="comparison" and isinstance(obj.get("subject_ids",[]),list) and len(obj.get("subject_ids",[]))<2:errors.append(f"{rel}: comparison must contain at least two subjects")
+        if obj.get("type")=="comparison" and isinstance(obj.get("subjects"),list) and len(obj.get("subjects",[]))<2:errors.append(f"{rel}: comparison must contain at least two subjects")
         if obj.get("type") in {"interpretation","hypothesis","claim"} and not any(obj.get(k) for k in ("source_ids","evidence_ids","subject_ids","question_ids")):warnings.append(f"{rel}: no explicit source, evidence, subject, or question linkage")
         if obj.get("type")=="hypothesis" and obj.get("status")=="confirmed":errors.append(f"{rel}: hypothesis cannot use status=confirmed")
         if obj.get("type")=="investigation":
