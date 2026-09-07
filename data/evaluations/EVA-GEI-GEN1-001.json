@@ -1,0 +1,19 @@
+{
+  "id":"EVA-GEI-GEN1-001",
+  "type":"evaluation",
+  "title":"Initial outcome evaluation: further testing required",
+  "status":"active",
+  "version":"1.0.11",
+  "evaluation_status":"complete",
+  "outcome_ids":["OUT-GEI-GEN1-001"],
+  "result_ids":["RES-GEI-GEN1-001"],
+  "hypothesis_ids":["HYP-GEI-001"],
+  "assessment":"The current outcome is appropriately classified as requiring further testing. Existing structure and traceability are useful, but the available record set does not establish that the hydraulic interpretation is the best explanation of Genesis 1.",
+  "expected_state":"A sufficiently tested hypothesis would show reproducible explanatory advantages against defined non-hydraulic alternatives and passage-level evidence.",
+  "observed_state":"The investigation has a defined protocol and provisional result, but passage-level observations, broader comparative evidence, counterevidence, and alternative-explanation testing remain incomplete.",
+  "delta":"The observed research state falls short of the evidence threshold needed for corroboration or confirmation.",
+  "disposition":"requires_revision",
+  "confidence":"C1",
+  "revision_recommendation":"Expand the evidence base, document counterevidence, execute the approved tests, and revise the hypothesis or result only when the recorded evidence warrants it.",
+  "notes":"Evaluation does not convert connectivity into support or confirmation. CONNECTED ≠ SUPPORTED ≠ CORROBORATED ≠ CONFIRMED."
+}
