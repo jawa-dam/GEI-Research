@@ -1,0 +1,26 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://github.com/jawa-dam/GEI-Research/blob/main/schema/audit.schema.json",
+  "title":"GEI Research Provenance Audit Record",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["id","type","title","status","version","audit_scope","audit_status","audited_record_ids","provenance_ids","checks","summary","actor","timestamp","epistemic_firewall"],
+  "properties":{
+    "id":{"type":"string","pattern":"^AUD-[A-Z0-9-]+-[0-9]{3}$"},
+    "type":{"const":"audit"},
+    "title":{"type":"string","minLength":1},
+    "status":{"type":"string","enum":["draft","active","deprecated"]},
+    "version":{"type":"string","pattern":"^\\d+\\.\\d+\\.\\d+$"},
+    "audit_scope":{"type":"string","minLength":1},
+    "audit_status":{"type":"string","enum":["pass","pass_with_warnings","fail"]},
+    "audited_record_ids":{"type":"array","minItems":1,"items":{"type":"string","pattern":"^[A-Z]{3}(?:-[A-Z0-9]+)+-[0-9]{3}$"}},
+    "provenance_ids":{"type":"array","minItems":1,"items":{"type":"string","pattern":"^PRV-[A-Z0-9-]+-[0-9]{3}$"}},
+    "checks":{"type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"required":["check_id","name","status","description"],"properties":{"check_id":{"type":"string"},"name":{"type":"string","minLength":1},"status":{"type":"string","enum":["pass","warning","fail"]},"description":{"type":"string","minLength":1},"record_ids":{"type":"array","items":{"type":"string","pattern":"^[A-Z]{3}(?:-[A-Z0-9]+)+-[0-9]{3}$"}},"provenance_ids":{"type":"array","items":{"type":"string","pattern":"^PRV-[A-Z0-9-]+-[0-9]{3}$"}}}}},
+    "summary":{"type":"object","additionalProperties":false,"required":["checks","passed","warnings","failed"],"properties":{"checks":{"type":"integer","minimum":0},"passed":{"type":"integer","minimum":0},"warnings":{"type":"integer","minimum":0},"failed":{"type":"integer","minimum":0}}},
+    "actor":{"type":"string","minLength":1},
+    "timestamp":{"type":"string","format":"date-time"},
+    "commit_sha":{"type":"string","pattern":"^[0-9a-f]{40}$"},
+    "epistemic_firewall":{"type":"string","minLength":1},
+    "notes":{"type":"string"}
+  }
+}
