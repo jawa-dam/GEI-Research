@@ -31,22 +31,23 @@ jobs:
         run: python -m pip install jsonschema
       - name: Validate canonical dataset
         run: python validation/validate.py
-      - name: Verify interface assets
+      - name: Verify V1.0.9 interface and investigation layer
         run: |
           test -f interface/index.html
           test -f interface/styles.css
           test -f interface/app.js
-          grep -q 'styles.css' interface/index.html
-          grep -q 'app.js' interface/index.html
+          test -f interface/investigation.js
+          grep -q 'investigation.js' interface/index.html
           grep -q 'graphView' interface/index.html
           grep -q 'intelligenceView' interface/index.html
-          grep -q 'traceFrom' interface/app.js
-          grep -q 'auditRecords' interface/app.js
-          grep -q 'buildRelationships' interface/app.js
+          grep -q 'investigation' interface/investigation.js
+          grep -q 'alternative_explanation' interface/investigation.js
+          grep -q 'test_plan' interface/investigation.js
           python - <<'PY'
           import pathlib,re
           html=pathlib.Path('interface/index.html').read_text(encoding='utf-8')
           js=pathlib.Path('interface/app.js').read_text(encoding='utf-8')
+          inv=pathlib.Path('interface/investigation.js').read_text(encoding='utf-8')
           required=['explorerView','timelineView','comparisonsView','epistemicView','graphView','intelligenceView','researchGraph','relationshipTable','claimTrace','auditList','recordDialog']
           missing=[x for x in required if x not in html]
           if missing: raise SystemExit(f'Missing interface elements: {missing}')
@@ -54,8 +55,13 @@ jobs:
           if not m: raise SystemExit('Could not find dataset category registry in app.js')
           cats=re.findall(r"'([^']+)'",m.group(1))
           missing_dirs=[c for c in cats if not pathlib.Path('data',c).is_dir()]
-          if missing_dirs: raise SystemExit(f'Missing canonical data directories: {missing_dirs}')
-          print(f'V1.0.8 interface verification passed: {len(cats)} data categories registered; graph intelligence and audit hooks present.')
+          missing_dirs += [c for c in ['questions','claims','investigations','results','outcomes'] if not pathlib.Path('data',c).is_dir()]
+          if missing_dirs: raise SystemExit(f'Missing canonical data directories: {sorted(set(missing_dirs))}')
+          for f in ['question.schema.json','claim.schema.json','investigation.schema.json','result.schema.json','outcome.schema.json']:
+              if not pathlib.Path('schema',f).is_file(): raise SystemExit(f'Missing schema: {f}')
+          for token in ['question_ids','claim_ids','hypothesis_ids','counterevidence_ids','result_ids','outcome_ids']:
+              if token not in inv: raise SystemExit(f'Missing investigation trace field in interface: {token}')
+          print(f'V1.0.9 verification passed: {len(cats)+5} canonical data categories supported; investigation engine connected.')
           PY
   deploy:
     name: Deploy to GitHub Pages
@@ -74,7 +80,7 @@ jobs:
           mkdir -p _site
           cp -R interface/. _site/
           touch _site/.nojekyll
-          printf '%s\n' 'GEI Research Interface V1.0.8' > _site/DEPLOYMENT-VERSION.txt
+          printf '%s\n' 'GEI Research Interface V1.0.9' > _site/DEPLOYMENT-VERSION.txt
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
