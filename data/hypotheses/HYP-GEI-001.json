@@ -1,1 +1,32 @@
-{"id":"HYP-GEI-001","type":"hypothesis","title":"Hydraulic-Structural Reading of Genesis 1","status":"draft","version":"1.0.0","hypothesis":"A coherent subset of Genesis 1's spatial and water-related descriptions can be modeled as a hydraulic-engineering analogy without requiring the analogy to be the text's conventional lexical meaning.","rationale":"The hypothesis follows from the GEI interpretation and is designed to be tested against passage structure, lexical evidence, historical context, and alternative explanations.","interpretation_ids":["INT-GEI-001"],"evidence_ids":[],"test_status":"untested","confidence":"C1","predictions":["Mappings should be defined before testing rather than selected after observing results.","Counterexamples and unmatched passages should be retained.","The model should be compared against non-engineering explanations."],"test_methods":["Passage-level textual analysis","Hebrew lexical analysis","Comparative cosmology analysis","Historical technology/context analysis","Counterevidence review"],"result_ids":[],"alternative_hypotheses":["Primarily cosmological/theological reading","Symbolic literary ordering without engineering referent"],"counterevidence_ids":[],"notes":"This record is explicitly a hypothesis, not a conclusion."}
+{
+  "id": "HYP-GEI-001",
+  "type": "hypothesis",
+  "title": "Hydraulic-Structural Reading of Genesis 1",
+  "status": "draft",
+  "version": "1.0.11",
+  "hypothesis": "A coherent subset of Genesis 1's spatial and water-related descriptions can be modeled as a hydraulic-engineering analogy without requiring the analogy to be the text's conventional lexical meaning.",
+  "rationale": "The hypothesis follows from the GEI interpretation and is designed to be tested against passage structure, lexical evidence, historical context, and alternative explanations.",
+  "interpretation_ids": ["INT-GEI-001"],
+  "evidence_ids": ["EVD-GEI-001"],
+  "test_status": "untested",
+  "confidence": "C1",
+  "predictions": [
+    "Mappings should be defined before testing rather than selected after observing results.",
+    "Counterexamples and unmatched passages should be retained.",
+    "The model should be compared against non-engineering explanations."
+  ],
+  "test_methods": [
+    "Passage-level textual analysis",
+    "Hebrew lexical analysis",
+    "Comparative cosmology analysis",
+    "Historical technology/context analysis",
+    "Counterevidence review"
+  ],
+  "result_ids": [],
+  "alternative_hypotheses": [
+    "Primarily cosmological/theological reading",
+    "Symbolic literary ordering without engineering referent"
+  ],
+  "counterevidence_ids": [],
+  "notes": "This record is explicitly a hypothesis, not a conclusion. EVD-GEI-001 provides comparative context; it does not establish authorial intent."
+}
