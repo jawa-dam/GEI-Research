@@ -1,0 +1,96 @@
+name: Deploy GEI Research Interface
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'interface/**'
+      - 'data/**'
+      - 'schema/**'
+      - 'validation/**'
+      - '.github/workflows/deploy-research-interface.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify interface
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install validator dependency
+        run: python -m pip install jsonschema
+
+      - name: Validate canonical dataset
+        run: python validation/validate.py
+
+      - name: Verify interface assets
+        run: |
+          test -f interface/index.html
+          test -f interface/styles.css
+          test -f interface/app.js
+          grep -q 'styles.css' interface/index.html
+          grep -q 'app.js' interface/index.html
+          grep -q 'api.github.com/repos/jawa-dam/GEI-Research/contents/data' interface/app.js
+          python - <<'PY'
+          import pathlib, re
+          html = pathlib.Path('interface/index.html').read_text(encoding='utf-8')
+          js = pathlib.Path('interface/app.js').read_text(encoding='utf-8')
+          required = ['explorerView','timelineView','comparisonsView','epistemicView','recordDialog']
+          missing = [x for x in required if x not in html]
+          if missing:
+              raise SystemExit(f'Missing interface elements: {missing}')
+          m = re.search(r"const CATEGORIES = \[(.*?)\];", js, re.S)
+          if not m:
+              raise SystemExit('Could not find dataset category registry in app.js')
+          cats = re.findall(r"'([^']+)'", m.group(1))
+          missing_dirs = [c for c in cats if not pathlib.Path('data', c).is_dir()]
+          if missing_dirs:
+              raise SystemExit(f'Missing canonical data directories: {missing_dirs}')
+          print(f'Interface verification passed: {len(cats)} data categories registered.')
+          PY
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: verify
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Prepare Pages artifact
+        run: |
+          mkdir -p _site
+          cp -R interface/. _site/
+          touch _site/.nojekyll
+          printf '%s\n' 'GEI Research Interface V1.0.6' > _site/DEPLOYMENT-VERSION.txt
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
