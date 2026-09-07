@@ -7,7 +7,7 @@
     {"operator_id":"OP-GEI-V1016-003","role":"Independent replication operator B","independent":true,"status":"planned"}
   ],
   "replication_runs":[
-    {"run_id":"RNR-GEI-V1016-001","operator_id":"OP-GEI-V1016-001","protocol_version":"1.0.15","status":"completed","blind_to_baseline":false,"step_results":[
+    {"run_id":"RNR-GEI-V1016-001","operator_id":"OP-GEI-V1016-001","protocol_version":"1.0.15","status":"planned","blind_to_baseline":false,"step_results":[
       {"step_id":"STEP-GEI-V1015-001","status":"pass","observed":"Canonical inputs and research identifiers were resolved."},
       {"step_id":"STEP-GEI-V1015-002","status":"pass","observed":"Declared inputs were reconstructed from canonical records."},
       {"step_id":"STEP-GEI-V1015-003","status":"not_run","observed":"The baseline record did not perform an independent reproduction."},
