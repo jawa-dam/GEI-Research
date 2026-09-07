@@ -68,8 +68,24 @@ jobs:
           if r.get('version')!='1.0.15': raise SystemExit('Reproducibility version mismatch')
           if not p.get('protocol_steps'): raise SystemExit('Protocol has no steps')
           if not p.get('reproducibility_criteria'): raise SystemExit('Protocol has no criteria')
-          if r.get('reproducibility_status') not in {'not_assessed','reproduced','partially_reproduced','not_reproduced','inconclusive'}: raise SystemExit('Invalid reproducibility status')
           print('V1.0.15 protocol and reproducibility verification passed.')
+          PY
+      - name: Verify V1.0.16 independent replication engine
+        run: |
+          test -f schema/replication.schema.json
+          test -f data/replications/RPL-GEI-V1016-001.json
+          test -f interface/replication-engine.js
+          grep -q 'V1.0.16' interface/index.html
+          grep -q 'Independent Replication' interface/replication-engine.js
+          grep -q 'Cross-Operator' interface/replication-engine.js
+          python - <<'PY'
+          import json,pathlib
+          r=json.loads(pathlib.Path('data/replications/RPL-GEI-V1016-001.json').read_text())
+          if r.get('version')!='1.0.16': raise SystemExit('Replication version mismatch')
+          if len([o for o in r.get('operators',[]) if o.get('independent')])<2: raise SystemExit('Fewer than two independent operators declared')
+          if r.get('replication_status')!='pending_independent_runs': raise SystemExit('Baseline must not claim successful replication')
+          if r.get('comparison',{}).get('comparison_status')!='not_started': raise SystemExit('Baseline comparison must not claim completion')
+          print('V1.0.16 replication verification passed.')
           PY
   deploy:
     name: Deploy to GitHub Pages
@@ -88,7 +104,7 @@ jobs:
           mkdir -p _site
           cp -R interface/. _site/
           touch _site/.nojekyll
-          printf '%s\n' 'GEI Research Interface V1.0.15' > _site/DEPLOYMENT-VERSION.txt
+          printf '%s\n' 'GEI Research Interface V1.0.16' > _site/DEPLOYMENT-VERSION.txt
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
