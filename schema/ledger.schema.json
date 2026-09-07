@@ -18,6 +18,8 @@
       "record_id":{"type":"string","pattern":"^[A-Z]{3}(?:-[A-Z0-9]+)+-[0-9]{3}$"},
       "record_version":{"type":"string","pattern":"^\\d+\\.\\d+\\.\\d+$"},
       "content_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+      "digest_algorithm":{"const":"SHA-256"},
+      "digest_scope":{"const":"canonical_json"},
       "parent_state_id":{"type":"string","pattern":"^STATE-[A-Z0-9-]+-[0-9]{3}$"},
       "parent_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},
       "provenance_id":{"type":"string","pattern":"^PRV-[A-Z0-9-]+-[0-9]{3}$"},
