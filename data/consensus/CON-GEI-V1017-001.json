@@ -1,0 +1,19 @@
+{
+  "id":"CON-GEI-V1017-001","type":"consensus","title":"GEI Genesis 1 Consensus & Disagreement Baseline","status":"active","version":"1.0.17",
+  "replication_ids":["RPL-GEI-V1016-001"],
+  "consensus_dimensions":[
+    {"dimension_id":"DIM-GEI-V1017-001","dimension":"procedural","status":"not_assessed","basis":"Independent operator runs have not yet been completed."},
+    {"dimension_id":"DIM-GEI-V1017-002","dimension":"observational","status":"not_assessed","basis":"No independent observations are currently available for comparison."},
+    {"dimension_id":"DIM-GEI-V1017-003","dimension":"evidence","status":"not_assessed","basis":"Independent evidence classifications have not yet been recorded."},
+    {"dimension_id":"DIM-GEI-V1017-004","dimension":"interpretive","status":"not_assessed","basis":"Independent interpretations have not yet been compared."},
+    {"dimension_id":"DIM-GEI-V1017-005","dimension":"hypothesis","status":"not_assessed","basis":"Independent hypothesis evaluations have not yet been completed."},
+    {"dimension_id":"DIM-GEI-V1017-006","dimension":"alternative_explanation","status":"not_assessed","basis":"Independent evaluations of alternative explanations have not yet been compared."}
+  ],
+  "disagreements":[],
+  "consensus_status":"not_assessed",
+  "consensus_summary":"The V1.0.17 consensus layer is operationally defined but no substantive consensus or disagreement is claimed before independent replication results exist.",
+  "consensus_map":{"procedural":"not_assessed","observational":"not_assessed","evidence":"not_assessed","interpretive":"not_assessed","hypothesis":"not_assessed","alternative_explanation":"not_assessed"},
+  "limitations":["Independent replication runs are pending.","This record establishes the comparison structure, not researcher agreement or disagreement."],
+  "epistemic_firewall":"Consensus and disagreement analysis describes agreement, divergence, and unresolved ambiguity among recorded research positions; it does not establish truth, authorial intent, or confirmation of the GEI hypothesis. Agreement must not be converted into substantive support without independent evidence. DISAGREEMENT IS DATA. CONNECTED ≠ SUPPORTED ≠ CORROBORATED ≠ CONFIRMED.",
+  "notes":"V1.0.17 baseline. Future consensus assessments must preserve operator positions and disagreements rather than overwrite them."
+}
