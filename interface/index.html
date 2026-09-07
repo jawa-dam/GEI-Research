@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="description" content="GEI Research Interface — canonical exploration layer for Genesis Engineered research data.">
+  <title>GEI Research Interface</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">GEI</div>
+        <div>
+          <div class="eyebrow">GENESIS ENGINEERED</div>
+          <h1>Research Interface</h1>
+        </div>
+      </div>
+      <div class="status" id="status">Connecting to canonical dataset…</div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <span class="eyebrow">V1.0.5</span>
+          <h2>Explore the research system.</h2>
+          <p>Chronology, civilizations, texts, water systems, comparisons, evidence, interpretations and hypotheses — connected to the canonical records in <code>data/</code>.</p>
+        </div>
+        <div class="hero-stats" id="heroStats">
+          <div><strong id="recordCount">—</strong><span>records</span></div>
+          <div><strong id="typeCount">—</strong><span>types</span></div>
+          <div><strong id="confidenceCount">—</strong><span>confidence-tagged</span></div>
+        </div>
+      </section>
+
+      <section class="controls panel">
+        <div class="search-wrap">
+          <label for="search">Search the research dataset</label>
+          <input id="search" type="search" placeholder="Search ID, title, description, notes…" autocomplete="off">
+        </div>
+        <div class="filters">
+          <label>Type<select id="typeFilter"><option value="all">All types</option></select></label>
+          <label>Status<select id="statusFilter"><option value="all">All statuses</option><option>active</option><option>draft</option><option>deprecated</option></select></label>
+          <label>Confidence<select id="confidenceFilter"><option value="all">All confidence</option><option>C0</option><option>C1</option><option>C2</option><option>C3</option><option>C4</option><option>C5</option></select></label>
+        </div>
+      </section>
+
+      <nav class="tabs" aria-label="Research views">
+        <button class="tab active" data-view="explorer">Explorer</button>
+        <button class="tab" data-view="timeline">Timeline</button>
+        <button class="tab" data-view="comparisons">Comparisons</button>
+        <button class="tab" data-view="epistemic">GEI Research</button>
+      </nav>
+
+      <section id="explorerView" class="view active">
+        <div class="section-heading"><div><span class="eyebrow">CANONICAL RECORDS</span><h2>Research Explorer</h2></div><span id="resultCount" class="muted">Loading…</span></div>
+        <div id="recordGrid" class="record-grid"></div>
+      </section>
+
+      <section id="timelineView" class="view">
+        <div class="section-heading"><div><span class="eyebrow">CHRONOLOGY</span><h2>Master Timeline</h2></div><span class="muted">Generated from chronology records</span></div>
+        <div id="timeline" class="timeline"></div>
+      </section>
+
+      <section id="comparisonsView" class="view">
+        <div class="section-heading"><div><span class="eyebrow">COMPARATIVE RESEARCH</span><h2>Comparison Matrix</h2></div><span id="comparisonCount" class="muted"></span></div>
+        <div id="comparisonGrid" class="comparison-grid"></div>
+      </section>
+
+      <section id="epistemicView" class="view">
+        <div class="section-heading"><div><span class="eyebrow">EPISTEMIC FIREWALL</span><h2>Evidence → Interpretation</h2></div></div>
+        <div class="firewall">
+          <div class="flow"><span>SOURCE</span><b>→</b><span>PASSAGE</span><b>→</b><span>OBSERVATION</span><b>→</b><span>EVIDENCE</span></div>
+          <div class="flow second"><span>COMPARISON</span><b>→</b><span>INTERPRETATION</span><b>→</b><span>HYPOTHESIS</span><b>→</b><span>TEST</span><b>→</b><span>OUTCOME</span></div>
+          <p>This interface does not turn an interpretation into a fact. Canonical records remain separated by research function, confidence and evidence level.</p>
+        </div>
+        <div id="epistemicCards" class="epistemic-grid"></div>
+      </section>
+    </main>
+
+    <footer>
+      <span>GEI Research Interface V1.0.5</span>
+      <span>DATA → LOGIC → INTERFACE</span>
+      <a href="https://github.com/jawa-dam/GEI-Research" target="_blank" rel="noopener">Open repository ↗</a>
+    </footer>
+  </div>
+
+  <dialog id="recordDialog">
+    <button id="closeDialog" class="close" aria-label="Close">×</button>
+    <div id="dialogContent"></div>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>
