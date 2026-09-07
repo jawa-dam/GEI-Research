@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""GEI-Research V1.0.14 validation engine."""
+"""GEI-Research V1.0.15 validation engine."""
 from __future__ import annotations
 import hashlib,json,re
 from pathlib import Path
 from jsonschema import Draft202012Validator,RefResolver
 ROOT=Path(__file__).resolve().parents[1];DATA=ROOT/'data';SCHEMA=ROOT/'schema'
-ID_RE=re.compile(r'^[A-Z]{3}(?:-[A-Z0-9]+)+-[0-9]{3}$');SHA_RE=re.compile(r'^[0-9a-f]{64}$');STATE_RE=re.compile(r'^STATE-[A-Z0-9-]+-[0-9]{3}$')
-TYPE_TO_SCHEMA={'chronology':'chronology.schema.json','civilization':'civilization.schema.json','region':'region.schema.json','text':'text.schema.json','passage':'passage.schema.json','cosmology':'cosmology.schema.json','water':'water.schema.json','technology':'technology.schema.json','linguistics':'linguistics.schema.json','source':'source.schema.json','evidence':'evidence.schema.json','comparison':'comparison.schema.json','interpretation':'interpretation.schema.json','hypothesis':'hypothesis.schema.json','question':'question.schema.json','claim':'claim.schema.json','investigation':'investigation.schema.json','result':'result.schema.json','outcome':'outcome.schema.json','decision':'decision.schema.json','execution':'execution.schema.json','observation':'observation.schema.json','evaluation':'evaluation.schema.json','provenance':'provenance.schema.json','audit':'audit.schema.json','attestation':'attestation.schema.json','ledger':'ledger.schema.json'}
+ID_RE=re.compile(r'^[A-Z]{3}(?:-[A-Z0-9]+)+-[0-9]{3}$');SHA_RE=re.compile(r'^[0-9a-f]{64}$');STATE_RE=re.compile(r'^STATE-[A-Z0-9-]+-[0-9]{3}$');PRO_RE=re.compile(r'^PRO-[A-Z0-9-]+-[0-9]{3}$');RUN_RE=re.compile(r'^RUN-[A-Z0-9-]+-[0-9]{3}$')
+TYPE_TO_SCHEMA={'chronology':'chronology.schema.json','civilization':'civilization.schema.json','region':'region.schema.json','text':'text.schema.json','passage':'passage.schema.json','cosmology':'cosmology.schema.json','water':'water.schema.json','technology':'technology.schema.json','linguistics':'linguistics.schema.json','source':'source.schema.json','evidence':'evidence.schema.json','comparison':'comparison.schema.json','interpretation':'interpretation.schema.json','hypothesis':'hypothesis.schema.json','question':'question.schema.json','claim':'claim.schema.json','investigation':'investigation.schema.json','result':'result.schema.json','outcome':'outcome.schema.json','decision':'decision.schema.json','execution':'execution.schema.json','observation':'observation.schema.json','evaluation':'evaluation.schema.json','provenance':'provenance.schema.json','audit':'audit.schema.json','attestation':'attestation.schema.json','ledger':'ledger.schema.json','protocol':'protocol.schema.json','reproducibility':'reproducibility.schema.json'}
 ALLOWED_CONFIDENCE={f'C{i}' for i in range(6)};ALLOWED_EVIDENCE={f'E{i}' for i in range(1,6)}
-REFERENCE_KEYS={'related_ids','source_ids','evidence_ids','subject_ids','comparison_ids','passage_ids','text_ids','civilization_ids','region_ids','chronology_ids','water_ids','technology_ids','linguistic_ids','interpretation_ids','hypothesis_ids','supports_ids','challenges_ids','tests_ids','result_ids','question_ids','investigation_ids','claim_ids','counterevidence_ids','outcome_ids','evaluation_ids','decision_ids','execution_ids','observation_ids','provenance_ids','provenance_id','record_ids','audited_record_ids','attestation_ids'}
+REFERENCE_KEYS={'related_ids','source_ids','evidence_ids','subject_ids','comparison_ids','passage_ids','text_ids','civilization_ids','region_ids','chronology_ids','water_ids','technology_ids','linguistic_ids','interpretation_ids','hypothesis_ids','supports_ids','challenges_ids','tests_ids','result_ids','question_ids','investigation_ids','claim_ids','counterevidence_ids','outcome_ids','evaluation_ids','decision_ids','execution_ids','observation_ids','provenance_ids','provenance_id','record_ids','audited_record_ids','attestation_ids','protocol_ids','reproduction_ids'}
 def load_json(path):
     with path.open(encoding='utf-8') as f:return json.load(f)
 def all_records():return sorted(p for p in DATA.rglob('*.json') if p.name!='validation-rules.json')
@@ -28,7 +28,7 @@ def main():
         if not rid:errors.append(f'{rel}: missing id');continue
         if rid in records:errors.append(f'{rel}: duplicate id {rid} (also {records[rid]})')
         records[rid]=rel
-        if not ID_RE.fullmatch(rid):errors.append(f'{rel}: invalid id format: {rid}')
+        if not ID_RE.fullmatch(rid) and not PRO_RE.fullmatch(rid):errors.append(f'{rel}: invalid id format: {rid}')
         if rid!=path.stem:errors.append(f'{rel}: filename/id mismatch: filename={path.stem}, id={rid}')
         rtype=obj.get('type');schema_name=TYPE_TO_SCHEMA.get(rtype)
         if not schema_name:errors.append(f'{rel}: unsupported or missing type: {rtype!r}');continue
@@ -85,6 +85,17 @@ def main():
             if sorted(drift)!=actual:errors.append(f'{rel}: drifted_record_ids does not match digest mismatches')
             if not drift and obj.get('attestation_status') in {'drift','fail'}:errors.append(f'{rel}: no digest drift but attestation_status={obj.get("attestation_status")}')
             if drift and obj.get('attestation_status') not in {'drift','fail'}:errors.append(f'{rel}: digest drift requires attestation_status=drift or fail')
+        if obj.get('type')=='protocol':
+            orders=[s.get('order') for s in obj.get('protocol_steps',[])]
+            if orders!=sorted(orders) or len(set(orders))!=len(orders):errors.append(f'{rel}: protocol step orders must be unique and ascending')
+            if not obj.get('reproducibility_criteria'):errors.append(f'{rel}: protocol requires reproducibility criteria')
+        if obj.get('type')=='reproducibility':
+            if obj.get('reproducibility_status')=='reproduced' and obj.get('match_rate',0)<1:errors.append(f'{rel}: reproduced status requires match_rate=1')
+            for run in obj.get('reproduction_runs',[]):
+                if not RUN_RE.fullmatch(run.get('run_id','')):errors.append(f'{rel}: invalid reproduction run id {run.get("run_id")}')
+                if run.get('status') in {'completed','failed','inconclusive'}:
+                    not_run=[s for s in run.get('step_results',[]) if s.get('status')=='not_run']
+                    if not_run:errors.append(f'{rel}: completed/terminal reproduction run contains not_run steps')
     for rel,obj in parsed.items():
         if obj.get('type')!='ledger':continue
         chain=obj.get('chain',[]);states={};last_by_record={}
@@ -110,7 +121,7 @@ def main():
         if len(last_by_record)!=len(obj.get('record_ids',[])):errors.append(f'{rel}: ledger does not contain a state for every listed record')
         for rid,s in last_by_record.items():
             if s.get('verification_status')!='verified':warnings.append(f'{rel}: latest state for {rid} is not verified')
-    print('GEI-Research Validation Engine V1.0.14');print(f'Records scanned: {len(parsed)}');print(f'Errors: {len(errors)}');print(f'Warnings: {len(warnings)}')
+    print('GEI-Research Validation Engine V1.0.15');print(f'Records scanned: {len(parsed)}');print(f'Errors: {len(errors)}');print(f'Warnings: {len(warnings)}')
     for x in errors:print(f'ERROR: {x}')
     for x in warnings:print(f'WARNING: {x}')
     if errors:print('VALIDATION: FAIL');return 1
