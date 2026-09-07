@@ -2,6 +2,21 @@
 
 All notable changes to GEI-Research are recorded here.
 
+## V1.0.16 — Independent Replication & Cross-Operator Verification Engine
+
+- Added `replication.schema.json` for independent operator definitions, replication runs, blind comparison, agreement metrics, disagreements, and replication status.
+- Added canonical `RPL-GEI-V1016-001` replication baseline linked to the V1.0.15 protocol and reproducibility baseline.
+- Declared two independent operator slots while explicitly excluding the baseline operator from independent replication counts.
+- Added distinct replication-run identifiers so independent executions become append-only research states rather than overwrites.
+- Added blind-comparison controls and explicit disagreement preservation.
+- Added cross-operator agreement metrics for protocol fidelity, observation agreement, and alternative-explanation agreement.
+- Added `interface/replication-engine.js` to expose the replication framework and current operator/run state.
+- Extended validation to enforce independent-operator minimums, unique operator/run identifiers, valid run references, terminal-run completeness, and replication-status safeguards.
+- Extended GitHub Pages deployment gates to verify V1.0.16 schemas, baseline records, interface integration, and anti-overclaiming conditions.
+- Preserved the epistemic firewall: successful replication measures repeatability/robustness of the recorded procedure; it does not establish truth, authorial intent, or confirmation of the GEI hypothesis.
+- Preserved the immutable-history principle: future independent runs must be appended as new states and must never overwrite historical runs.
+- Preserved the rule: **CONNECTED ≠ SUPPORTED ≠ CORROBORATED ≠ CONFIRMED**.
+
 ## V1.0.15 — Research Reproducibility & Protocol Engine
 
 - Added `protocol.schema.json` for versioned, repeatable research procedures.
