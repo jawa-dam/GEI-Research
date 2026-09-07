@@ -1,0 +1,22 @@
+{
+  "id":"REP-GEI-V1015-001","type":"reproducibility","title":"GEI Genesis 1 Reproducibility Baseline Assessment","status":"active","version":"1.0.15",
+  "protocol_ids":["PRO-GEI-V1015-001"],"execution_ids":["EXE-GEI-GEN1-001"],
+  "reproduction_runs":[{
+    "run_id":"RUN-GEI-V1015-001","operator":"GEI Research System","protocol_version":"1.0.15","status":"planned",
+    "step_results":[
+      {"step_id":"STEP-GEI-V1015-001","status":"pass","observed":"Required investigation, source, evidence, comparison, interpretation, and hypothesis identifiers were resolved from the canonical repository."},
+      {"step_id":"STEP-GEI-V1015-002","status":"pass","observed":"The declared input set can be reconstructed from canonical records."},
+      {"step_id":"STEP-GEI-V1015-003","status":"not_run","observed":"Independent reproduction execution has not yet been performed.","deviation":"No independent operator run is claimed."},
+      {"step_id":"STEP-GEI-V1015-004","status":"not_run","observed":"Expected-versus-observed comparison awaits reproduction execution."},
+      {"step_id":"STEP-GEI-V1015-005","status":"pass","observed":"The reproduction record is structurally ready to capture an independent run without silently changing the baseline."}
+    ]
+  }],
+  "assessment":"The reproducibility protocol and baseline inputs are defined, but independent execution has not yet occurred. Therefore the GEI Genesis 1 research process is not yet reproducibly demonstrated.",
+  "reproducibility_status":"not_assessed","match_rate":0,
+  "deviations":["Independent reproduction run not yet executed."],
+  "limitations":["Current record demonstrates protocol readiness, not successful independent reproduction."],
+  "alternative_explanations":["Primarily cosmological/theological reading","Symbolic literary ordering without engineering referent"],
+  "result_ids":["RES-GEI-GEN1-001"],"outcome_ids":["OUT-GEI-GEN1-001"],"provenance_ids":["PRV-GEI-V1013-001"],
+  "epistemic_firewall":"Reproducibility is a property of the recorded research procedure and its repeatability; it does not establish truth, authorial intent, or confirmation of the GEI hypothesis. CONNECTED ≠ SUPPORTED ≠ CORROBORATED ≠ CONFIRMED.",
+  "notes":"V1.0.15 baseline. A future independent run must create a new run state rather than overwrite this baseline assessment."
+}
