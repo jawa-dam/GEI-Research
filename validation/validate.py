@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""GEI-Research V1.0.10 validation engine."""
+"""GEI-Research V1.0.11 validation engine."""
 from __future__ import annotations
 import json,re,sys
 from pathlib import Path
 from jsonschema import Draft202012Validator, RefResolver
 ROOT=Path(__file__).resolve().parents[1];DATA=ROOT/"data";SCHEMA=ROOT/"schema"
 ID_RE=re.compile(r"^[A-Z]{3}(?:-[A-Z0-9]+)+-[0-9]{3}$")
-TYPE_TO_SCHEMA={"chronology":"chronology.schema.json","civilization":"civilization.schema.json","region":"region.schema.json","text":"text.schema.json","passage":"passage.schema.json","cosmology":"cosmology.schema.json","water":"water.schema.json","technology":"technology.schema.json","linguistics":"linguistics.schema.json","source":"source.schema.json","evidence":"evidence.schema.json","comparison":"comparison.schema.json","interpretation":"interpretation.schema.json","hypothesis":"hypothesis.schema.json","question":"question.schema.json","claim":"claim.schema.json","investigation":"investigation.schema.json","result":"result.schema.json","outcome":"outcome.schema.json","decision":"decision.schema.json","execution":"execution.schema.json","observation":"observation.schema.json"}
+TYPE_TO_SCHEMA={"chronology":"chronology.schema.json","civilization":"civilization.schema.json","region":"region.schema.json","text":"text.schema.json","passage":"passage.schema.json","cosmology":"cosmology.schema.json","water":"water.schema.json","technology":"technology.schema.json","linguistics":"linguistics.schema.json","source":"source.schema.json","evidence":"evidence.schema.json","comparison":"comparison.schema.json","interpretation":"interpretation.schema.json","hypothesis":"hypothesis.schema.json","question":"question.schema.json","claim":"claim.schema.json","investigation":"investigation.schema.json","result":"result.schema.json","outcome":"outcome.schema.json","decision":"decision.schema.json","execution":"execution.schema.json","observation":"observation.schema.json","evaluation":"evaluation.schema.json"}
 ALLOWED_CONFIDENCE={f"C{i}" for i in range(6)};ALLOWED_EVIDENCE={f"E{i}" for i in range(1,6)}
-REFERENCE_KEYS={"related_ids","source_ids","evidence_ids","subject_ids","comparison_ids","passage_ids","text_ids","civilization_ids","region_ids","chronology_ids","water_ids","technology_ids","linguistic_ids","interpretation_ids","hypothesis_ids","supports_ids","challenges_ids","tests_ids","result_ids","question_ids","investigation_ids","claim_ids","counterevidence_ids","outcome_ids","decision_ids","execution_ids","observation_ids"}
+REFERENCE_KEYS={"related_ids","source_ids","evidence_ids","subject_ids","comparison_ids","passage_ids","text_ids","civilization_ids","region_ids","chronology_ids","water_ids","technology_ids","linguistic_ids","interpretation_ids","hypothesis_ids","supports_ids","challenges_ids","tests_ids","result_ids","question_ids","investigation_ids","claim_ids","counterevidence_ids","outcome_ids","evaluation_ids","decision_ids","execution_ids","observation_ids"}
 def load_json(path):
     with path.open(encoding="utf-8") as f:return json.load(f)
 def all_records():return sorted(p for p in DATA.rglob("*.json") if p.name!="validation-rules.json")
@@ -60,7 +60,11 @@ def main():
             if obj.get("execution_status")=="completed" and not obj.get("observations"):warnings.append(f"{rel}: completed execution has no observations")
         if obj.get("type")=="observation" and not obj.get("execution_ids"):errors.append(f"{rel}: observation must link to an execution")
         if obj.get("type")=="outcome" and obj.get("disposition") in {"supports","partially_supports"} and obj.get("confidence")=="C0":warnings.append(f"{rel}: supportive outcome has C0 confidence")
-    print("GEI-Research Validation Engine V1.0.10");print(f"Records scanned: {len(parsed)}");print(f"Errors: {len(errors)}");print(f"Warnings: {len(warnings)}")
+        if obj.get("type")=="evaluation":
+            if not obj.get("outcome_ids"):errors.append(f"{rel}: evaluation must link to an outcome")
+            if obj.get("evaluation_status")=="complete" and not obj.get("assessment"):errors.append(f"{rel}: completed evaluation requires an assessment")
+            if obj.get("disposition")=="requires_revision" and not obj.get("revision_recommendation"):warnings.append(f"{rel}: revision disposition has no revision recommendation")
+    print("GEI-Research Validation Engine V1.0.11");print(f"Records scanned: {len(parsed)}");print(f"Errors: {len(errors)}");print(f"Warnings: {len(warnings)}")
     for x in errors:print(f"ERROR: {x}")
     for x in warnings:print(f"WARNING: {x}")
     if errors:print("VALIDATION: FAIL");return 1
