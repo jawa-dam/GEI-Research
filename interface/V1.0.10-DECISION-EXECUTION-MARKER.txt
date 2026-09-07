@@ -1,0 +1,10 @@
+GEI-Research V1.0.10
+GEI Research Decision → Execution → Observation Engine
+
+Canonical chain:
+INVESTIGATION → DECISION → EXECUTION → OBSERVATION → RESULT → OUTCOME
+
+Epistemic rule:
+CONNECTED ≠ SUPPORTED ≠ CORROBORATED ≠ CONFIRMED
+
+A decision authorizes an action; an execution records what was done; an observation records what was observed. Results and outcomes must be recorded explicitly and may be inconclusive.
