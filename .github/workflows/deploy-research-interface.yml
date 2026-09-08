@@ -107,6 +107,7 @@ jobs:
         run: |
           grep -q 'V1.0.17' interface/index.html
           printf '%s\n' 'Current GEI Research Interface V1.0.17 verified.'
+      # Fresh verification trigger: all historical gates are artifact-based; the live interface is V1.0.17.
   deploy:
     name: Deploy to GitHub Pages
     needs: verify
