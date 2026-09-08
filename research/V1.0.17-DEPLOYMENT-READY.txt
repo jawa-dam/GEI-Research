@@ -1,0 +1,3 @@
+GEI Research V1.0.17 deployment-ready checkpoint.
+
+This marker is temporary and records that the V1.0.17 deployment-gate repair is being re-triggered after the stale V1.0.16 homepage check was removed.
